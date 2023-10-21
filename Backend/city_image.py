@@ -4,11 +4,11 @@ from PIL import Image, ImageOps
 
 # Based on Google
 city_centers = {
-    "SanFran": (37.7749, -122.4194),
+    "San Fransisco": (37.7749, -122.4194),
     "Detroit": (42.3314, -83.0458),
     "Chicago": (41.8781, -87.6298),
-    "WashDC": (38.9072, -77.0369),
-    "NYC": (40.7128, -74.0060)
+    "Washington DC": (38.9072, -77.0369),
+    "New York City": (40.7128, -74.0060)
 }
 
 class CityImage:
