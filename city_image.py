@@ -1,5 +1,6 @@
 import math
 import numpy as np
+
 from PIL import Image, ImageOps 
 
 # Based on Google
@@ -12,21 +13,23 @@ city_centers = {
 }
 
 class CityImage:
-    def __init__(self, img_location: str, latitude: float, longitude: float):
+    def __init__(self, img_location: str):
         self.img_loc = img_location
+
+    def set_loc(self, latitude: float, longitude: float):
         self.long = longitude
         self.lat = latitude
         self.city = self.get_city(latitude, longitude)
 
     # Get city based on closest distance
-    def get_city(lat: float, long: float):
+    def get_city(latitude: float, longitude: float):
         distances = {city: 0 for city in city_centers.keys()}
 
         for city in city_centers.keys():
             lat_c, long_c = city_centers[city]
 
             # distance formula disregarding sqr root
-            distances[city] = (lat - lat_c) ** 2 + (long - long_c) ** 2
+            distances[city] = (latitude - lat_c) ** 2 + (longitude - long_c) ** 2
 
         return min(distances, key=distances.get)
     
