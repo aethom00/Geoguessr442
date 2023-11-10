@@ -23,9 +23,9 @@ class GUI: # class for image
         self.total_lat = self.extreme_points['N'] - self.extreme_points['S']
         self.total_long = self.extreme_points['W'] - self.extreme_points['E']
 
-        self.output = np.array([[0 for _ in range(self.num_rects_width)] for _ in range(self.num_rects_height)])
+        # self.output = np.array([[0 for _ in range(self.num_rects_width)] for _ in range(self.num_rects_height)])
         # maybe replace with...
-        # self.output = np.zeros((self.num_rects_height, self.num_rects_width));
+        self.output = np.zeros((self.num_rects_height, self.num_rects_width));
 
         self.locations = {}
 
@@ -48,7 +48,7 @@ class GUI: # class for image
                 x, y = (w * self.square_amount[0], h * self.square_amount[1])
                 self.locations[(i, j)] = self.pixel_loc_to_lat_long(x + 0.5 * self.square_amount[0], y + 0.5 * self.square_amount[1])
     
-    def show(self, display_coords=False): # used to display the rectangles onto the america.png image
+    def show(self, correct, guess, display_coords=False): # used to display the rectangles onto the america.png image
         fig, ax = plt.subplots()
         ax.imshow(Image.open(self.image_loc))
 
@@ -58,8 +58,8 @@ class GUI: # class for image
         ax.set_xticklabels(self.x_labels, rotation=90)
         ax.set_yticklabels(self.y_labels)
 
-        ax.set_xlabel("Longitude")
-        ax.set_ylabel("Latitude")
+        ax.set_xlabel("Longitude (West)")
+        ax.set_ylabel("Latitude (North)")
 
         for i, w in enumerate(range(self.num_rects_width)):
             for j, h in enumerate(range(self.num_rects_height)):
@@ -73,6 +73,10 @@ class GUI: # class for image
                 if display_coords:
                     plt.text(x, y + 0.5 * self.square_amount[1], self.locations[(i, j)], fontsize=5 * 10/self.num_rects_width)                        
 
+
+        ax.plot(guess[0], guess[1], 'o', color='black')
+        ax.plot(correct[0], correct[1], 'o', color='green')    
+
         plt.tight_layout()  
         plt.show()
 
@@ -82,5 +86,4 @@ class GUI: # class for image
 
     def clear_output(self):
         self.output.fill(0)
-
 
