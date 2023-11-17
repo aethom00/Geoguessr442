@@ -3,8 +3,6 @@ import matplotlib.patches as patches
 from PIL import Image
 import random
 import numpy as np
-from scipy.special import softmax
-from scipy.signal import normalize
 
 class GUI: # class for image
     def __init__(self, num_rects_width, num_rects_height):
@@ -25,17 +23,26 @@ class GUI: # class for image
 
         # self.output = np.array([[0 for _ in range(self.num_rects_width)] for _ in range(self.num_rects_height)])
         # maybe replace with...
-        self.output = np.zeros((self.num_rects_height, self.num_rects_width));
+        self.output = np.zeros((self.num_rects_height, self.num_rects_width))
+
+        self.show_ticks = True
 
         self.locations = {}
 
     def pixel_loc_to_lat_long(self, w, h):
         return (round(self.extreme_points['N'] - h/self.height * (self.total_lat), 2), round(self.extreme_points['W'] - w/self.width * (self.total_long), 2))
 
-    def long_lat_to_index(self, long, lat):
-        # TODO
-        # Convert Coordinates to the cloest 2d index that can be used in the locations dictionary
-        return ()
+    def long_lat_to_pixel(self, long, lat):
+        # Calculation for longitude and lat relative position
+        long_rel = (self.extreme_points['W'] - long) / self.total_long
+        lat_rel = (self.extreme_points['N'] - lat) / self.total_lat
+
+        x_pixel = int(long_rel * self.width)
+        y_pixel = int(lat_rel * self.height)
+
+        return (x_pixel, y_pixel)
+
+
     
     def init(self): 
         self.x_ticks = [i * self.square_amount[0] for i in range(self.num_rects_width + 1)]
@@ -47,16 +54,33 @@ class GUI: # class for image
             for j, h in enumerate(range(self.num_rects_height)): # j represents an incremented variable starting at 0 and increasing by 1
                 x, y = (w * self.square_amount[0], h * self.square_amount[1])
                 self.locations[(i, j)] = self.pixel_loc_to_lat_long(x + 0.5 * self.square_amount[0], y + 0.5 * self.square_amount[1])
+
+    def place_dot(self, ax, long, lat, r=10):
+        # Convert longitude and latitude to pixel coordinates
+        x_pixel, y_pixel = self.long_lat_to_pixel(long, lat)
+
+        # Create a circle at the given coordinates with the specified radius
+        circle = plt.Circle((x_pixel, y_pixel), r, color='blue', fill=True)
+
+        # Add the circle to the provided Axes object
+        ax.add_patch(circle)
+
+
+    def toggle_ticks(self, show_ticks):
+        self.show_ticks = show_ticks
     
-    def show(self, correct, guess, display_coords=False): # used to display the rectangles onto the america.png image
+    def show(self, dots=None, display_coords=False): # used to display the rectangles onto the america.png image
         fig, ax = plt.subplots()
         ax.imshow(Image.open(self.image_loc))
+        
+        if self.show_ticks:
+            ax.set_xticks(self.x_ticks)
+            ax.set_yticks(self.y_ticks)
 
-        ax.set_xticks(self.x_ticks)
-        ax.set_yticks(self.y_ticks)
-
-        ax.set_xticklabels(self.x_labels, rotation=90)
-        ax.set_yticklabels(self.y_labels)
+            ax.set_xticklabels(self.x_labels, rotation=90)
+            ax.set_yticklabels(self.y_labels)
+        else:
+            plt.axis('off')
 
         ax.set_xlabel("Longitude (West)")
         ax.set_ylabel("Latitude (North)")
@@ -73,9 +97,15 @@ class GUI: # class for image
                 if display_coords:
                     plt.text(x, y + 0.5 * self.square_amount[1], self.locations[(i, j)], fontsize=5 * 10/self.num_rects_width)                        
 
-
-        ax.plot(guess[0], guess[1], 'o', color='black')
-        ax.plot(correct[0], correct[1], 'o', color='green')    
+        if dots:
+            for coords in dots:
+                if len(coords) == 3:
+                    # If radius is provided
+                    self.place_dot(ax, coords[0], coords[1], coords[2])
+                elif len(coords) == 2:
+                    # If only longitude and latitude are provided
+                    self.place_dot(ax, coords[0], coords[1])
+    
 
         plt.tight_layout()  
         plt.show()
