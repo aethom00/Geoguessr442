@@ -6,7 +6,7 @@ import numpy as np
 
 class GUI: # class for image
     def __init__(self, num_rects_width, num_rects_height):
-        self.image_loc = 'america.png'
+        self.image_loc = 'scaled_america.png' # I think this might be a better representation
         im = Image.open(self.image_loc) # opens image
         self.width, self.height = im.size
         im.close()
@@ -55,12 +55,12 @@ class GUI: # class for image
                 x, y = (w * self.square_amount[0], h * self.square_amount[1])
                 self.locations[(i, j)] = self.pixel_loc_to_lat_long(x + 0.5 * self.square_amount[0], y + 0.5 * self.square_amount[1])
 
-    def place_dot(self, ax, long, lat, r=10):
+    def place_dot(self, ax, long, lat, color, r=10):
         # Convert longitude and latitude to pixel coordinates
         x_pixel, y_pixel = self.long_lat_to_pixel(long, lat)
 
         # Create a circle at the given coordinates with the specified radius
-        circle = plt.Circle((x_pixel, y_pixel), r, color='blue', fill=True)
+        circle = plt.Circle((x_pixel, y_pixel), r, color=(color if color else 'blue'), fill=True)
 
         # Add the circle to the provided Axes object
         ax.add_patch(circle)
@@ -69,7 +69,7 @@ class GUI: # class for image
     def toggle_ticks(self, show_ticks):
         self.show_ticks = show_ticks
     
-    def show(self, dots=None, display_coords=False): # used to display the rectangles onto the america.png image
+    def show(self, dots=None, display_coords=False, color=None): # used to display the rectangles onto the america.png image
         fig, ax = plt.subplots()
         ax.imshow(Image.open(self.image_loc))
         
@@ -101,10 +101,10 @@ class GUI: # class for image
             for coords in dots:
                 if len(coords) == 3:
                     # If radius is provided
-                    self.place_dot(ax, coords[0], coords[1], coords[2])
+                    self.place_dot(ax, coords[0], coords[1], coords[2], color)
                 elif len(coords) == 2:
                     # If only longitude and latitude are provided
-                    self.place_dot(ax, coords[0], coords[1])
+                    self.place_dot(ax, coords[0], coords[1], color)
     
 
         plt.tight_layout()  
