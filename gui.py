@@ -56,15 +56,15 @@ class GUI: # class for image
                 self.locations[(i, j)] = self.pixel_loc_to_lat_long(x + 0.5 * self.square_amount[0], y + 0.5 * self.square_amount[1])
 
     def place_dot(self, ax, long, lat, color, r=10):
-        # Convert longitude and latitude to pixel coordinates
         x_pixel, y_pixel = self.long_lat_to_pixel(long, lat)
-
-        # Create a circle at the given coordinates with the specified radius
         circle = plt.Circle((x_pixel, y_pixel), r, color=(color if color else 'blue'), fill=True)
-
-        # Add the circle to the provided Axes object
         ax.add_patch(circle)
+        self.dots.append(circle)  # Store the dot object
 
+    def clear_dots(self):
+        for dot in self.dots:
+            dot.remove()  # Remove the dot from the plot
+        self.dots.clear()  # Clear the list of stored dots
 
     def toggle_ticks(self, show_ticks):
         self.show_ticks = show_ticks

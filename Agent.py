@@ -1,6 +1,7 @@
 from gui import GUI
-from city_image import CityImage
+from city_image import CityImage, get_images
 from generate_images import generate_image
+import numpy as np
 import os
 
 class Agent:
@@ -9,7 +10,7 @@ class Agent:
         self.gui = GUI(rectangles[0], rectangles[1])
         self.max_images = max_images
 
-        self.city_images = []
+        self.city_images = np.array([])
 
     def init(self):
         self.gui.init()
@@ -19,7 +20,14 @@ class Agent:
 
     def generate_images(self):
         self.clear_data_folder()
-        
+        for _ in range(self.max_images):
+            generate_image(self.gui, self.app_token)
+        self.city_images = get_images()
+
+    def show_dots(self):
+        dots = [loc.get_loc() for loc in self.city_images]
+        self.gui.show(dots=dots)
+
     def clear_data_folder(self):
         data_folder = 'Data'
         for filename in os.listdir(data_folder):
