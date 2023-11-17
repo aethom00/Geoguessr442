@@ -29,6 +29,8 @@ class GUI: # class for image
 
         self.locations = {}
 
+        self.dots = []
+
     def pixel_loc_to_lat_long(self, w, h):
         return (round(self.extreme_points['N'] - h/self.height * (self.total_lat), 2), round(self.extreme_points['W'] - w/self.width * (self.total_long), 2))
 

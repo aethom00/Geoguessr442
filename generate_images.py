@@ -27,13 +27,13 @@ def save_image(image_url, coordinate):
     if response.status_code == 200:
         with open(file_path, 'wb') as file:
             file.write(response.content)
-        print(f"Saved image to {file_path}")
+        # print(f"Saved image to {file_path}")
     else:
         print(f"Error downloading image: {response.status_code}, URL: {image_url}")
 
 
 def find_images_in_bbox(bbox, token, limit=100):
-    url = f'https://graph.mapillary.com/images?access_token={token}&fields=id&bbox={bbox}&limit={limit}'
+    url = f'https://graph.mapillary.com/images?access_token={token}&fields=id&bbox={bbox}&limit={limit}&is_pano=false'
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -66,5 +66,5 @@ def generate_image(gui, app_access_token):
                 image_url = get_image_url_from_id(image_id, app_access_token)
                 if image_url:
                     save_image(image_url, (top_left[1], top_left[0]))  # Coordinate format might need adjustment
-                    print(f"Image found and saved for bbox: {bbox}")
+                    # print(f"Image found and saved for bbox: {bbox}")
                     return
