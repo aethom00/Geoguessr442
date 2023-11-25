@@ -31,6 +31,9 @@ class GUI: # class for image
 
         self.dots = []
 
+        self.fig, self.map = plt.subplots()
+        self.map.imshow(Image.open(self.image_loc))
+
     def pixel_loc_to_lat_long(self, w, h):
         return (round(self.extreme_points['N'] - h/self.height * (self.total_lat), 2), round(self.extreme_points['W'] - w/self.width * (self.total_long), 2))
 
@@ -44,7 +47,6 @@ class GUI: # class for image
 
         return (x_pixel, y_pixel)
 
-
     
     def init(self): 
         self.x_ticks = [i * self.square_amount[0] for i in range(self.num_rects_width + 1)]
@@ -57,11 +59,11 @@ class GUI: # class for image
                 x, y = (w * self.square_amount[0], h * self.square_amount[1])
                 self.locations[(i, j)] = self.pixel_loc_to_lat_long(x + 0.5 * self.square_amount[0], y + 0.5 * self.square_amount[1])
 
-    def place_dot(self, ax, long, lat, color, r=10):
+    def place_dot(self, long, lat, color=None, r=10):
         x_pixel, y_pixel = self.long_lat_to_pixel(long, lat)
         circle = plt.Circle((x_pixel, y_pixel), r, color=(color if color else 'blue'), fill=True)
-        ax.add_patch(circle)
-        self.dots.append(circle)  # Store the dot object
+        self.map.add_patch(circle)
+        self.dots.append(circle) # store the dot object
 
     def clear_dots(self):
         for dot in self.dots:
@@ -72,44 +74,38 @@ class GUI: # class for image
         self.show_ticks = show_ticks
     
     def show(self, dots=None, display_coords=False, color=None): # used to display the rectangles onto the america.png image
-        fig, ax = plt.subplots()
-        ax.imshow(Image.open(self.image_loc))
-        
         if self.show_ticks:
-            ax.set_xticks(self.x_ticks)
-            ax.set_yticks(self.y_ticks)
+            self.map.set_xticks(self.x_ticks)
+            self.map.set_yticks(self.y_ticks)
 
-            ax.set_xticklabels(self.x_labels, rotation=90)
-            ax.set_yticklabels(self.y_labels)
+            self.map.set_xticklabels(self.x_labels, rotation=90)
+            self.map.set_yticklabels(self.y_labels)
         else:
-            plt.axis('off')
+            self.map.axis('off')
 
-        ax.set_xlabel("Longitude (West)")
-        ax.set_ylabel("Latitude (North)")
+        self.map.set_xlabel("Longitude (West)")
+        self.map.set_ylabel("Latitude (North)")
 
         for i, w in enumerate(range(self.num_rects_width)):
             for j, h in enumerate(range(self.num_rects_height)):
                 x, y = (w * self.square_amount[0], h * self.square_amount[1])
-                ax.add_patch(patches.Rectangle(
-                                            (x, y), 
-                                            self.square_amount[0], self.square_amount[1], 
-                                            fc=(1, 0, 0, self.output[j, i] * 0.5),  
-                                            ec='none', 
-                                            lw=1))
+                self.map.add_patch(patches.Rectangle(
+                                    (x, y), 
+                                    self.square_amount[0], 
+                                    self.square_amount[1], 
+                                    fc=(1, 0, 0, self.output[j, i] * 0.5),  
+                                    ec='none', 
+                                    lw=1))
                 if display_coords:
-                    plt.text(x, y + 0.5 * self.square_amount[1], self.locations[(i, j)], fontsize=5 * 10/self.num_rects_width)                        
-
+                    self.map.text(x, y + 0.5 * self.square_amount[1], self.locations[(i, j)], fontsize=5 * 10/self.num_rects_width)
         if dots:
             for coords in dots:
                 if len(coords) == 3:
-                    # If radius is provided
-                    self.place_dot(ax, coords[0], coords[1], coords[2], color)
+                    self.place_dot(coords[0], coords[1], coords[2], color)
                 elif len(coords) == 2:
-                    # If only longitude and latitude are provided
-                    self.place_dot(ax, coords[0], coords[1], color)
-    
+                    self.place_dot(coords[0], coords[1], color)
 
-        plt.tight_layout()  
+        plt.tight_layout()
         plt.show()
 
 

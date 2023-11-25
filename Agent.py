@@ -10,11 +10,11 @@ class Agent:
 
         self.city_images = np.array([])
 
-    def init(self):
+    def init(self): # default constructor
         self.gui.init()
 
     def generate_images(self, iterations, limit=True):
-        self.clear_data_folder()
+        self.clear_data_folder() # will wipe all previous data
         for i in range(iterations):
             print(f"Iteration {i + 1}", end=': ')
             generate_image(self.gui, self.app_token, limit)
