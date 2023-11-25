@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 class CityImage:
     def __init__(self, img_location: str, shape=(100, 100)):
         self.img_loc = img_location
-        img = Image.open(self.img_loc).resize(shape, Image.ANTIALIAS)
+        img = Image.open(self.img_loc).resize(shape)
         img_grayscale = np.array(ImageOps.grayscale(img), dtype=np.float32) / 255.0  # Normalized
         self.img_grayscale = img_grayscale
         img.close()
@@ -51,30 +51,4 @@ class CityImage:
         plt.show()
 
 
-def get_images(amount=float('inf'), shape=(100, 100)):
-    images = []
-    folder_path = 'Data'
 
-    # Check if the directory exists
-    if not os.path.exists(folder_path):
-        print(f"Directory '{folder_path}' not found.")
-        return np.array(images)
-
-    for i, filename in enumerate(os.listdir(folder_path)):
-        if i >= amount:  # Limit the number of images processed
-            break
-
-        if filename.endswith(".jpg") or filename.endswith(".png"):
-            # Extract longitude and latitude from filename
-            try:
-                long, lat = map(float, filename[:-4].split(', '))
-            except ValueError:
-                print(f"Invalid filename format: {filename}")
-                continue
-
-            img_location = os.path.join(folder_path, filename)
-            city_image = CityImage(img_location, shape)
-            city_image.set_loc(long, lat)
-            images.append(city_image)
-
-    return np.array(images)

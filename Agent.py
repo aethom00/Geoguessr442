@@ -1,6 +1,5 @@
 from gui import GUI
-from city_image import CityImage, get_images
-from generate_images import generate_image
+from generate_images import get_images, generate_image
 import numpy as np
 import os
 
@@ -14,13 +13,13 @@ class Agent:
     def init(self):
         self.gui.init()
 
-    def generate_images(self, amount):
+    def generate_images(self, iterations, limit=True):
         self.clear_data_folder()
-        for i in range(amount):
-            generate_image(self.gui, self.app_token)
-            print(f'Images generated: {i + 1}')
-        self.city_images = get_images()
-        self.clear_data_folder()
+        for i in range(iterations):
+            print(f"Iteration {i + 1}", end=': ')
+            generate_image(self.gui, self.app_token, limit)
+            self.city_images = np.append(self.city_images, get_images())
+            self.clear_data_folder()
 
     def clear_data_folder(self):
         data_folder = 'Data'
