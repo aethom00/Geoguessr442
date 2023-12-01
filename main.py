@@ -3,7 +3,7 @@ from Agent import Agent
 agent = Agent()
 agent.init()
 
-# agent.generate_images(10)
+agent.generate_images(15)
 
 # agent.gui.place_dot(88.5694, 47.1211)
 
@@ -12,8 +12,8 @@ agent.init()
 agent.gui.generate_random_output()
 
 dots = []
-dots.append((-88.5694, 47.1211))
-dots.append((-71.0589, 42.3601))
+# dots.append((-88.5694, 47.1211))
+# dots.append((-71.0589, 42.3601))
 
 for city_loc in agent.city_images:
     dots.append(city_loc.get_loc())

@@ -3,6 +3,7 @@ import requests
 import os
 import numpy as np
 from city_image import CityImage
+import geocoder
 
 extreme_points = {'N': 50, 'S': 24, 'E': -66, 'W': -126}
 
@@ -74,6 +75,10 @@ def generate_image(gui, app_access_token, limit=True):
             if limit:
                 selected_image_id = random.choice(image_ids)  # Select a random image ID
                 image_url, image_coordinates = get_image_url_from_id(selected_image_id, app_access_token)
+                        
+                if not is_within(['United States', 'Mexico', 'Canada'], image_coordinates):
+                    return generate_image(gui, app_access_token, limit)
+
                 if image_url and image_coordinates:
                     save_image(image_url, image_coordinates)  
                     print("Generated 1 Image(s)")
@@ -84,6 +89,10 @@ def generate_image(gui, app_access_token, limit=True):
                 print(f"Found {len(image_ids)} images")
                 for image_id in image_ids:
                     image_url, image_coordinates = get_image_url_from_id(image_id, app_access_token)
+
+                    if not is_within(['United States', 'Mexico', 'Canada'], image_coordinates):
+                        return generate_image(gui, app_access_token, limit)
+                
                     if image_url and image_coordinates:
                         save_image(image_url, image_coordinates)  
                     else:
@@ -120,3 +129,19 @@ def get_images(amount=float('inf'), shape=(100, 100)):
             images.append(city_image)
 
     return np.array(images)
+
+def is_within(countries, coordinates):
+    # loc = geocoder.google([coordinates[0], coordinates[1]], method='reverse')
+    loc = geocoder.google([45.15, -75.14], method='reverse')
+    
+    # TODO delete
+    # test_tz = geocoder.google([45.15, -75.14], method='timezone')
+    # print('timezone', test_tz.timeZoneName)
+    
+    print(loc.country)
+    if loc.country in countries:
+        return True
+    print("Image not within US, Mexico, or Canada")
+    return False
+
+# geocoder.google([45.15, -75.14], method='timezone')

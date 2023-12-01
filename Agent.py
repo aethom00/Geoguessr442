@@ -10,6 +10,10 @@ class Agent:
 
         self.city_images = np.array([])
 
+    def setup_network(self):
+        self.output_size = self.gui.num_rects_height * self.gui.num_rects_width
+        
+
     def init(self): # default constructor
         self.gui.init()
 
@@ -30,3 +34,7 @@ class Agent:
                     os.unlink(file_path)
             except Exception as e:
                 print(f'Failed to delete {file_path}. Reason: {e}')
+
+    
+
+    
