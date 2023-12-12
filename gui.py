@@ -59,9 +59,6 @@ class GUI: # class for image
     def place_dot(self, long, lat, color=None, r=10):
         x_pixel, y_pixel = self.long_lat_to_pixel(long, lat)
         circle = plt.Circle((x_pixel, y_pixel), r, color=(color if color else 'blue'), fill=True)
-        _, map = plt.subplots()
-        map.imshow(Image.open(self.image_loc))
-        map.add_patch(circle)
         self.dots.append(circle) # store the dot object
 
     def clear_dots(self):
@@ -100,6 +97,9 @@ class GUI: # class for image
                                     lw=1))
                 if display_coords:
                     map.text(x, y + 0.5 * self.square_amount[1], self.locations[(i, j)], fontsize=5 * 10/self.num_rects_width)
+        
+        for dot in self.dots:
+            map.add_patch(dot)
 
         plt.tight_layout()
         plt.show()

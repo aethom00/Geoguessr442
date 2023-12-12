@@ -78,7 +78,7 @@ def generate_image(gui, app_access_token, limit):
             for image_id in image_ids:
                 image_url, image_coordinates = get_image_url_from_id(image_id, app_access_token)
 
-                if not is_within_countries(image_coordinates, ['USA', 'CAN', 'MEX']):
+                if not image_coordinates or not is_within_countries(image_coordinates, ['USA', 'CAN', 'MEX']):
                     # print(f"Image is not within the United States, Canada, or Mexico. Trying again...")
                     continue
             
