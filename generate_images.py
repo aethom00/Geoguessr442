@@ -7,6 +7,8 @@ import geocoder
 
 extreme_points = {'N': 50, 'S': 24, 'E': -66, 'W': -126}
 
+MAX_LIMIT = 1000
+
 def generate_random_coordinate():
     lat = random.uniform(extreme_points['S'], extreme_points['N'])
     long = random.uniform(extreme_points['W'], extreme_points['E'])
@@ -34,7 +36,7 @@ def save_image(image_url, coordinates):
         print(f"Error downloading image: {response.status_code}, URL: {image_url}")
 
 
-def find_images_in_bbox(bbox, token, limit=100):
+def find_images_in_bbox(bbox, token, limit):
     url = f'https://graph.mapillary.com/images?access_token={token}&fields=id&bbox={bbox}&limit={limit}&is_pano=false'
     response = requests.get(url)
     if response.status_code == 200:
@@ -62,43 +64,31 @@ def get_image_url_from_id(image_id, token):
         return None, None
 
     
-def generate_image(gui, app_access_token, limit=True):
+def generate_image(gui, app_access_token, limit):
     while True:
         i = random.randint(0, gui.num_rects_width - 1)
         j = random.randint(0, gui.num_rects_height - 1)
         top_left = gui.pixel_loc_to_lat_long(i * gui.square_amount[0], j * gui.square_amount[1])
         bottom_right = gui.pixel_loc_to_lat_long((i + 1) * gui.square_amount[0], (j + 1) * gui.square_amount[1])
         bbox = f"{top_left[1]},{bottom_right[0]},{bottom_right[1]},{top_left[0]}"
-
-        image_ids = find_images_in_bbox(bbox, app_access_token)
+        print("Finding images...")
+        image_ids = find_images_in_bbox(bbox, app_access_token, (limit if limit else MAX_LIMIT))
         if image_ids:
-            if limit:
-                selected_image_id = random.choice(image_ids)  # Select a random image ID
-                image_url, image_coordinates = get_image_url_from_id(selected_image_id, app_access_token)
-                        
-                if not is_within(['United States', 'Mexico', 'Canada'], image_coordinates):
-                    return generate_image(gui, app_access_token, limit)
+            # print(f"Found {len(image_ids)} images")
+            for image_id in image_ids:
+                image_url, image_coordinates = get_image_url_from_id(image_id, app_access_token)
 
+                if not is_within_countries(image_coordinates, ['USA', 'CAN', 'MEX']):
+                    # print(f"Image is not within the United States, Canada, or Mexico. Trying again...")
+                    continue
+            
                 if image_url and image_coordinates:
                     save_image(image_url, image_coordinates)  
-                    print("Generated 1 Image(s)")
-                    return
                 else:
-                    print(f"No valid image URL or coordinates for image ID: {selected_image_id}")
-            else:
-                print(f"Found {len(image_ids)} images")
-                for image_id in image_ids:
-                    image_url, image_coordinates = get_image_url_from_id(image_id, app_access_token)
-
-                    if not is_within(['United States', 'Mexico', 'Canada'], image_coordinates):
-                        return generate_image(gui, app_access_token, limit)
-                
-                    if image_url and image_coordinates:
-                        save_image(image_url, image_coordinates)  
-                    else:
-                        print(f"No valid image URL or coordinates for image ID: {image_id}")
-                print(f"Generated {len(image_ids)} Image(s)")
-                return
+                    print(f"No valid image URL or coordinates for image ID: {image_id}")
+            print(f"Generated {len(image_ids)} Image(s)")
+            return
+        print(f"Could not find any images in the bounding box: {bbox}. Trying again...")
                 
 def get_images(amount=float('inf'), shape=(100, 100)):
     images = []
@@ -130,18 +120,11 @@ def get_images(amount=float('inf'), shape=(100, 100)):
 
     return np.array(images)
 
-def is_within(countries, coordinates):
-    # loc = geocoder.google([coordinates[0], coordinates[1]], method='reverse')
-    loc = geocoder.google([45.15, -75.14], method='reverse')
-    
-    # TODO delete
-    # test_tz = geocoder.google([45.15, -75.14], method='timezone')
-    # print('timezone', test_tz.timeZoneName)
-    
-    print(loc.country)
-    if loc.country in countries:
-        return True
-    print("Image not within US, Mexico, or Canada")
-    return False
+import geocoder
 
-# geocoder.google([45.15, -75.14], method='timezone')
+def is_within_countries(coordinates, countries):
+    g = geocoder.arcgis(coordinates[::-1], method='reverse')
+    # print(g.country)
+    return g.country in countries
+
+

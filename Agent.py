@@ -12,18 +12,18 @@ class Agent:
 
     def setup_network(self):
         self.output_size = self.gui.num_rects_height * self.gui.num_rects_width
-        
 
     def init(self): # default constructor
         self.gui.init()
 
-    def generate_images(self, iterations, limit=True):
+    def generate_images(self, iterations, limit=1):
         self.clear_data_folder() # will wipe all previous data
         for i in range(iterations):
             print(f"Iteration {i + 1}", end=': ')
             generate_image(self.gui, self.app_token, limit)
             self.city_images = np.append(self.city_images, get_images())
             self.clear_data_folder()
+        print("Done generating images")
 
     def clear_data_folder(self):
         data_folder = 'Data'
@@ -34,6 +34,13 @@ class Agent:
                     os.unlink(file_path)
             except Exception as e:
                 print(f'Failed to delete {file_path}. Reason: {e}')
+
+    def show(self, see_locations=True, display_coordinates=False):
+        self.gui.clear_dots()
+        if see_locations:
+            for city_image in self.city_images:
+                self.gui.place_dot(*city_image.get_loc(), color='blue')
+        self.gui.show(display_coords=display_coordinates)
 
     
 
