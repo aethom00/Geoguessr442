@@ -6,7 +6,7 @@ import numpy as np
 
 class GUI: # class for image
     def __init__(self, num_rects_width, num_rects_height):
-        self.image_loc = 'scaled_america.png' # I think this might be a better representation
+        self.image_loc = 'scaled_america_mex_can.png' # I think this might be a better representation
         im = Image.open(self.image_loc) # opens image
         self.width, self.height = im.size
         im.close()
@@ -14,7 +14,7 @@ class GUI: # class for image
         # assigns number of x,y rectangles to input numbers
         self.num_rects_width = num_rects_width 
         self.num_rects_height = num_rects_height
-        
+
         self.square_amount = (self.width / num_rects_width, self.height / num_rects_height)
         self.extreme_points = {'N': 50, 'S': 24, 'E': -66, 'W': -126} # assigns extreme points
         self.total_lat = self.extreme_points['N'] - self.extreme_points['S']

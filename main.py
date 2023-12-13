@@ -14,5 +14,5 @@ agent.init()
     # dots.append(city_loc.get_loc())
 # agent.gui.show(dots=dots, display_coords=False)
 
-agent.generate_images(10,limit=1)
+agent.generate_images(100,limit=1)
 agent.show()
