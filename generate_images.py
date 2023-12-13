@@ -71,7 +71,7 @@ def generate_image(gui, app_access_token, limit):
         top_left = gui.pixel_loc_to_lat_long(i * gui.square_amount[0], j * gui.square_amount[1])
         bottom_right = gui.pixel_loc_to_lat_long((i + 1) * gui.square_amount[0], (j + 1) * gui.square_amount[1])
         bbox = f"{top_left[1]},{bottom_right[0]},{bottom_right[1]},{top_left[0]}"
-        print("Finding images...")
+        print("Finding new image")
         image_ids = find_images_in_bbox(bbox, app_access_token, (limit if limit else MAX_LIMIT))
         if image_ids:
             # print(f"Found {len(image_ids)} images")
@@ -86,9 +86,10 @@ def generate_image(gui, app_access_token, limit):
                     save_image(image_url, image_coordinates)  
                 else:
                     print(f"No valid image URL or coordinates for image ID: {image_id}")
-            print(f"Generated {len(image_ids)} Image(s)")
+            # print(f"Generated {len(image_ids)} Image(s)")
+            print(f"Image Generated\n")
             return
-        print(f"Could not find any images in the bounding box: {bbox}. Trying again...")
+        print(f"Couldn't find any images in the bounding box: [({top_left[1]}, {bottom_right[0]}), ({bottom_right[1]}, {top_left[0]})]. Trying again...")
                 
 def get_images(amount=float('inf'), shape=(100, 100)):
     images = []

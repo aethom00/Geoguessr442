@@ -14,21 +14,14 @@ class GUI: # class for image
         # assigns number of x,y rectangles to input numbers
         self.num_rects_width = num_rects_width 
         self.num_rects_height = num_rects_height
-
+        
         self.square_amount = (self.width / num_rects_width, self.height / num_rects_height)
-
         self.extreme_points = {'N': 50, 'S': 24, 'E': -66, 'W': -126} # assigns extreme points
         self.total_lat = self.extreme_points['N'] - self.extreme_points['S']
         self.total_long = self.extreme_points['W'] - self.extreme_points['E']
-
-        # self.output = np.array([[0 for _ in range(self.num_rects_width)] for _ in range(self.num_rects_height)])
-        # maybe replace with...
         self.output = np.zeros((self.num_rects_height, self.num_rects_width))
-
         self.show_ticks = True
-
         self.locations = {}
-
         self.dots = []
 
     def pixel_loc_to_lat_long(self, w, h):
