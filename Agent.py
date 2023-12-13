@@ -23,7 +23,7 @@ class Agent:
             generate_image(self.gui, self.app_token, limit)
             self.city_images = np.append(self.city_images, get_images())
             self.clear_data_folder()
-        print("Done generating images")
+        print("Done generating images, please view diagram")
 
     def clear_data_folder(self):
         data_folder = 'Data'
