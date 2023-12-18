@@ -23,6 +23,10 @@ class Agent:
             generate_image(self.gui, self.app_token, limit)
             self.city_images = np.append(self.city_images, get_images())
             self.clear_data_folder()
+
+        for city_image in self.city_images:
+            city_image.set_grid_pos(self.gui)
+            
         print("Done generating images, please view diagram")
 
     def clear_data_folder(self):
@@ -41,6 +45,11 @@ class Agent:
             for city_image in self.city_images:
                 self.gui.place_dot(*city_image.get_loc(), color='blue')
         self.gui.show(display_coords=display_coordinates)
+
+    def refresh(self):
+        if not self.city_images:
+            self.generate_images(10)
+        
 
     
 

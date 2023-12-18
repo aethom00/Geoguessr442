@@ -8,8 +8,8 @@ class CityImage:
     def __init__(self, img_location: str, shape=(100, 100)):
         self.img_loc = img_location
         img = Image.open(self.img_loc).resize(shape)
-        img_grayscale = np.array(ImageOps.grayscale(img), dtype=np.float32) / 255.0  # Normalized
-        self.img_grayscale = img_grayscale
+        self.img_grayscale = np.array(ImageOps.grayscale(img), dtype=np.float32) / 255.0  # Normalized
+        self.grid_x, self.grid_y = None, None
         img.close()
 
     # Set the location of the image
@@ -49,6 +49,12 @@ class CityImage:
         plt.xticks([])  
         plt.yticks([])  
         plt.show()
+
+    def set_grid_pos(self, gui):
+        pixel_x, pixel_y = gui.long_lat_to_pixel(self.long, self.lat)
+
+        self.grid_x = int(pixel_x // gui.square_amount[0])
+        self.grid_y = int(pixel_y // gui.square_amount[1])
 
 
 
