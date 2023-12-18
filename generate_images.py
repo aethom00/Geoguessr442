@@ -4,6 +4,7 @@ import os
 import numpy as np
 from city_image import CityImage
 import geocoder
+import time 
 
 extreme_points = {'N': 50, 'S': 24, 'E': -66, 'W': -126}
 
@@ -13,6 +14,21 @@ MAX_LIMIT = 1000
 #     lat = random.uniform(extreme_points['S'], extreme_points['N'])
 #     long = random.uniform(extreme_points['W'], extreme_points['E'])
 #     return (long, lat)
+
+def safe_request(url, max_retries=10, delay=2):
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                return response
+            else:
+                print(f"Non-200 status code: {response.status_code}")
+                time.sleep(delay)
+        except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
+            print(f"Request failed: {e}. Retrying {attempt + 1}/{max_retries}...")
+            time.sleep(delay)
+    print("Failed to retrieve data after multiple retries.")
+    return None
 
     
 def save_image(image_url, coordinates):
@@ -27,29 +43,29 @@ def save_image(image_url, coordinates):
     file_path = os.path.join('Data', filename)
 
     # Download and save the image
-    response = requests.get(image_url)
-    if response.status_code == 200:
+    response = safe_request(image_url)
+    if response:
         with open(file_path, 'wb') as file:
             file.write(response.content)
         #print(f"Saved image to {file_path}")
     else:
-        print(f"Error downloading image: {response.status_code}, URL: {image_url}")
+        print(f"Failed to download image: {image_url}")
 
 
 def find_images_in_bbox(bbox, token, limit):
     url = f'https://graph.mapillary.com/images?access_token={token}&fields=id&bbox={bbox}&limit={limit}&is_pano=false'
-    response = requests.get(url)
-    if response.status_code == 200:
+    response = safe_request(url)
+    if response:
         data = response.json()
         return [item['id'] for item in data['data']] if data.get('data') else []
     else:
-        print(f"Error fetching data: {response.status_code}")
+        print(f"Error fetching data for bbox: {bbox}")
         return []
     
 def get_image_url_from_id(image_id, token):
     url = f'https://graph.mapillary.com/{image_id}?access_token={token}&fields=id,thumb_1024_url,computed_geometry'
-    response = requests.get(url)
-    if response.status_code == 200:
+    response = safe_request(url)
+    if response:
         data = response.json()
         image_url = data.get('thumb_1024_url')
 
@@ -60,7 +76,7 @@ def get_image_url_from_id(image_id, token):
         else:
             return None, None
     else:
-        print(f"Error fetching image details: {response.status_code}")
+        print(f"Failed to fetch image details: {image_id}")
         return None, None
 
     
