@@ -63,7 +63,7 @@ class Agent:
         self.city_images = np.array([])
         self.generate_images(amount, verbose=verbose)
 
-    def train_model(self, total_epochs=10, epoch_per_epochs=10, batch_size=32, images_per_epoch=5, use_noisy_images=False):
+    def train_model(self, total_epochs=10, epoch_per_epochs=10, batch_size=32, images_per_epoch=5, use_noisy_images=False, save_after_epochs=10):
         for epoch in range(total_epochs):
             print(f"Epoch {epoch + 1}/{total_epochs} ...")
             self.refresh(images_per_epoch, verbose=False)
@@ -75,9 +75,13 @@ class Agent:
 
             self.model.fit(X_train, y_train, epochs=epoch_per_epochs, batch_size=batch_size)
 
+            if (epoch + 1) % save_after_epochs == 0:
+                print("Saving model...")
+                self.model.save(self.model_path)
+
         self.model.save(self.model_path)
 
-    def evaluate_model(self, images_to_test=10, use_noisy_images=False):
+    def evaluate_model(self, images_to_test=10, use_noisy_images=False, show=True):
         print("Generating images to test...")
         self.refresh(images_to_test, verbose=False)
         print("Done generating images to test") 
@@ -93,12 +97,13 @@ class Agent:
         print(f"Loss: {loss}, Accuracy: {accuracy}")
 
         # Predict and display for each test image
-        for i, city_image in enumerate(self.city_images):
-            prediction = self.model.predict(X_test[i:i+1])[0]
-            self.gui.map_output_to_grid(prediction)
-            self.gui.clear_dots()
-            self.gui.place_dot(*city_image.get_loc(), color='blue')
-            self.gui.show()
+        if show:
+            for i, city_image in enumerate(self.city_images):
+                prediction = self.model.predict(X_test[i:i+1])[0]
+                self.gui.map_output_to_grid(prediction)
+                self.gui.clear_dots()
+                self.gui.place_dot(*city_image.get_loc(), color='blue')
+                self.gui.show()
 
 
 def create_cnn_model(input_shape, num_classes, model_path):
