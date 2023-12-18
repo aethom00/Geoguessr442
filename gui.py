@@ -104,3 +104,12 @@ class GUI: # class for image
     def clear_output(self):
         self.output.fill(0)
 
+    def map_output_to_grid(self, model_output):
+            reshaped_output = model_output.reshape(self.num_rects_height, self.num_rects_width)
+
+            normalized_output = reshaped_output - reshaped_output.min()
+            if normalized_output.max() != 0:
+                normalized_output /= normalized_output.max()
+
+            self.output = normalized_output
+

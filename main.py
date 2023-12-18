@@ -1,18 +1,13 @@
 from Agent import Agent
 
 agent = Agent()
-agent.init()
+agent.init(model_path='vision_model_v1.keras')
 
-# agent.generate_images(15)
-# agent.gui.place_dot(88.5694, 47.1211)
-# dots = agent.gui.dots
-# agent.gui.generate_random_output()
-# dots = []
-# dots.append((-88.5694, 47.1211))
-# dots.append((-71.0589, 42.3601))
-# for city_loc in agent.city_images:
-    # dots.append(city_loc.get_loc())
-# agent.gui.show(dots=dots, display_coords=False)
-
-agent.generate_images(100,limit=1)
-agent.show()
+agent.train_model(
+    total_epochs=1_000,                # Total number of epochs to train for
+    epoch_per_epochs=15,               # Number of sub-epochs to train for [Utiziling the same images of that epoch]
+    batch_size=32,                     # Batch size for training
+    images_per_epoch=100,              # How many images to generate per epoch
+    use_noisy_images=False,            # Whether to use noisy images or not
+)
+agent.evaluate_model()
