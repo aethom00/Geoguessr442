@@ -110,6 +110,8 @@ class Agent:
         print(f"Total training time: {total_elapsed_time:.2f} seconds")
         self.model.save(self.model_path)
 
+        return total_elapsed_time, total_epochs, epoch_per_epochs, images_per_epoch
+
     def evaluate_model(self, images_to_test=10, use_noisy_images=False, show=True):
         print("Generating images to test...")
         self.refresh(images_to_test, verbose=False)
@@ -134,6 +136,8 @@ class Agent:
                 self.gui.place_dot(*city_image.get_loc(), color='blue')
                 city_image.show()
                 self.gui.show()
+
+        return loss, accuracy
 
 
 def create_cnn_model(input_shape, num_classes, model_path):
