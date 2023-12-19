@@ -3,5 +3,6 @@ Total elapsed time: 95.74 seconds
 Total epochs: 10
 Epochs per epoch: 3
 Images per epoch: 10
+Total Images Generated: 100
 Loss: 5.194201469421387
 Accuracy: 0.0

@@ -28,20 +28,18 @@ class Agent:
         self.setup_network(model_path)
         self.model_path = model_path
 
-    def generate_images(self, iterations, limit=1, verbose=False):
+    def generate_images(self, iterations, limit=1, verbose=False, image_cache=set()):
         self.clear_data_folder() # will wipe all previous data
         for i in range(iterations):
-            if verbose:
-                print(f"Iteration {i + 1}", end=': ')
-            generate_image(self.gui, self.app_token, limit, verbose=verbose)
+            generate_image(self.gui, self.app_token, limit, verbose=verbose, image_cache=image_cache)
             self.city_images = np.append(self.city_images, get_images())
             self.clear_data_folder()
+            print(f"Generated {i + 1}/{iterations} image(s)", end='\r')
 
         for city_image in self.city_images:
             city_image.set_grid_pos(self.gui)
         
-        if verbose:
-            print("Done generating images, please view diagram")
+        print(f"Done generating {len(self.city_images)} image(s)")
 
     def clear_data_folder(self):
         data_folder = 'Data'
@@ -60,7 +58,7 @@ class Agent:
                 self.gui.place_dot(*city_image.get_loc(), color='blue')
         self.gui.show(display_coords=display_coordinates)
 
-    def refresh(self, amount, verbose=False):
+    def refresh(self, amount, verbose=False, image_cache=set()):
         self.city_images = np.array([])
         self.generate_images(amount, verbose=verbose)
 
@@ -82,11 +80,12 @@ class Agent:
 
     def train_model(self, total_epochs=10, epoch_per_epochs=10, batch_size=32, images_per_epoch=5, use_noisy_images=False, save_after_epochs=10):
         total_start_time = time.time()
+        image_cache = set()
 
         for epoch in range(total_epochs):
             epoch_start_time = time.time()
             print(f"Epoch {epoch + 1}/{total_epochs} ...")
-            self.refresh(images_per_epoch, verbose=False)
+            self.refresh(images_per_epoch, verbose=False, image_cache=image_cache)
 
             # Prepare the dataset for the current epoch
             X_train = np.array([ci.get_image(noisy=use_noisy_images).reshape(100, 100, 1) for ci in self.city_images])
