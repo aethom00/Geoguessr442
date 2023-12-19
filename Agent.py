@@ -2,6 +2,7 @@ from gui import GUI
 from generate_images import get_images, generate_image
 import numpy as np
 import os
+import time
 
 from tensorflow import keras
 from keras.models import Sequential
@@ -63,8 +64,27 @@ class Agent:
         self.city_images = np.array([])
         self.generate_images(amount, verbose=verbose)
 
+    def predict_images_in_folder(self, folder_path='Images', use_noisy_images=False, show=True):
+        loaded_images = get_images(shape=self.input_shape[:-1], folder_path=folder_path)
+
+        for city_image in loaded_images:
+            img_data = city_image.get_image(noisy=use_noisy_images).reshape(1, *self.input_shape)
+            prediction = self.model.predict(img_data)[0]
+
+            if show:
+                self.gui.map_output_to_grid(prediction)
+                self.gui.clear_dots()
+                # Unkown location corresponds to coordinates (0, 0)
+                if city_image.get_loc() != (0, 0):
+                    self.gui.place_dot(*city_image.get_loc(), color='blue') 
+                city_image.show() 
+                self.gui.show()  
+
     def train_model(self, total_epochs=10, epoch_per_epochs=10, batch_size=32, images_per_epoch=5, use_noisy_images=False, save_after_epochs=10):
+        total_start_time = time.time()
+
         for epoch in range(total_epochs):
+            epoch_start_time = time.time()
             print(f"Epoch {epoch + 1}/{total_epochs} ...")
             self.refresh(images_per_epoch, verbose=False)
 
@@ -75,10 +95,19 @@ class Agent:
 
             self.model.fit(X_train, y_train, epochs=epoch_per_epochs, batch_size=batch_size)
 
+            epoch_end_time = time.time()
+            elapsed_time = epoch_end_time - epoch_start_time
+            estimated_total_time = elapsed_time * (total_epochs - epoch - 1)
+            print(f"Elapsed time for epoch: {elapsed_time:.2f} seconds")
+            print(f"Estimated time remaining: {estimated_total_time:.2f} seconds")
+
             if (epoch + 1) % save_after_epochs == 0:
                 print("Saving model...")
                 self.model.save(self.model_path)
 
+        total_end_time = time.time()
+        total_elapsed_time = total_end_time - total_start_time
+        print(f"Total training time: {total_elapsed_time:.2f} seconds")
         self.model.save(self.model_path)
 
     def evaluate_model(self, images_to_test=10, use_noisy_images=False, show=True):
@@ -103,6 +132,7 @@ class Agent:
                 self.gui.map_output_to_grid(prediction)
                 self.gui.clear_dots()
                 self.gui.place_dot(*city_image.get_loc(), color='blue')
+                city_image.show()
                 self.gui.show()
 
 

@@ -111,9 +111,8 @@ def generate_image(gui, app_access_token, limit, verbose=False):
         if verbose:
             print(f"Couldn't find any images in the bounding box: [({top_left[1]}, {bottom_right[0]}), ({bottom_right[1]}, {top_left[0]})]. Trying again...")
                 
-def get_images(amount=float('inf'), shape=(100, 100)):
+def get_images(amount=float('inf'), shape=(100, 100), folder_path='Data'):
     images = []
-    folder_path = 'Data'
 
     # Check if the directory exists
     if not os.path.exists(folder_path):
