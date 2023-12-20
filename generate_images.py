@@ -15,7 +15,7 @@ MAX_LIMIT = 100
 #     long = random.uniform(extreme_points['W'], extreme_points['E'])
 #     return (long, lat)
 
-def safe_request(url, max_retries=10, delay=2):
+def safe_request(url, max_retries=3, delay=2):
     for attempt in range(max_retries):
         try:
             response = requests.get(url)

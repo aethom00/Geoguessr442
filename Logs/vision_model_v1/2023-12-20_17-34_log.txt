@@ -1,0 +1,8 @@
+Model name: vision_model_v1
+Total elapsed time: 2980.12 seconds
+Total epochs: 200
+Epochs per epoch: 3
+Images per epoch: 10
+Total Images Generated: 2000
+Loss: 2.476050615310669
+Accuracy: 0.5319148898124695
