@@ -60,7 +60,7 @@ class Agent:
 
     def refresh(self, amount, verbose=False, image_cache=set()):
         self.city_images = np.array([])
-        self.generate_images(amount, verbose=verbose)
+        self.generate_images(amount, verbose=verbose, image_cache=image_cache)
 
     def predict_images_in_folder(self, folder_path='Images', use_noisy_images=False, show=True):
         loaded_images = get_images(shape=self.input_shape[:-1], folder_path=folder_path)
@@ -133,7 +133,7 @@ class Agent:
                 self.gui.map_output_to_grid(prediction)
                 self.gui.clear_dots()
                 self.gui.place_dot(*city_image.get_loc(), color='blue')
-                city_image.show()
+                city_image.show(noisy=use_noisy_images)
                 self.gui.show()
 
         return loss, accuracy
