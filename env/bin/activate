@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/ashtonthomas/Desktop/Geoguessr_442/env"
+VIRTUAL_ENV="/Users/ashtonthomas/Desktop/Classes/EECS_442/Geoguessr_442/env"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

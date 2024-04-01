@@ -1,4 +1,4 @@
-#!/Users/ashtonthomas/Desktop/Geoguessr_442/env/bin/python3.10
+#!/Users/ashtonthomas/Desktop/Classes/EECS_442/Geoguessr_442/env/bin/python3.10
 # -*- coding: utf-8 -*-
 import re
 import sys

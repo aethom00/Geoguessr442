@@ -1,4 +1,5 @@
-numpy
+numpy==1.22.0
+# tensorflow==2.8
 tensorflow
 pandas
 scipy

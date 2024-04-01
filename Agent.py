@@ -1,8 +1,9 @@
 from gui import GUI
-from generate_images import get_images, generate_image
+from generate_images import get_images, generate_images
 import numpy as np
 import os
 import time
+import tensorflow
 
 from tensorflow import keras
 from keras.models import Sequential
@@ -10,10 +11,12 @@ from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 from keras.optimizers import Adam
 from keras.models import load_model
 
+# added
+import shutil
 
 class Agent:
     def __init__(self, rectangles=(15, 10)):
-        self.app_token = 'MLY|6743037905784607|b0ff2a68e1d5bdc77f0c775a050547b8'
+        self.app_token = 'MLY|7380996212029520|cd6ad220b67aff81fe1328c76de2255a'
         self.gui = GUI(rectangles[0], rectangles[1])
         self.city_images = np.array([])
         
@@ -31,7 +34,7 @@ class Agent:
     def generate_images(self, iterations, limit=1, verbose=False, image_cache=set()):
         self.clear_data_folder() # will wipe all previous data
         for i in range(iterations):
-            generate_image(self.gui, self.app_token, limit, verbose=verbose, image_cache=image_cache)
+            generate_images(self.gui, self.app_token, limit, verbose=verbose, image_cache=image_cache)
             self.city_images = np.append(self.city_images, get_images())
             self.clear_data_folder()
             print(f"Generated {i + 1}/{iterations} image(s)", end='\r')
@@ -165,7 +168,27 @@ def create_cnn_model(input_shape, num_classes, model_path):
         return model
 
         
+#sushrita
+def main():
+    agent = Agent(rectangles=(15, 10))
+    agent.init()
 
-    
+    # output_dir = "Data"
+
+    # if os.path.exists(output_dir):
+    #     shutil.rmtree(output_dir, ignore_errors=True)
+    # os.makedirs(output_dir)  
+
+    iterations = 5
+    limit = 1
+    verbose = True
+    image_cache = set()
+    agent.generate_images(iterations, limit=limit, verbose=verbose, image_cache=image_cache)
+
+
+    agent.show()
+
+if __name__ == "__main__":
+    main()    
 
     

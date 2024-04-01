@@ -1,4 +1,4 @@
-from Agent import Agent
+from Agent1 import Agent1
 import time
 import os
 
@@ -24,7 +24,7 @@ def log_data(model_name, total_elapsed_time, total_epochs, epoch_per_epochs, ima
         file.write(f"Accuracy: {accuracy}\n")
 
 model_name = 'vision_model_v1'
-agent = Agent()
+agent = Agent1()
 agent.init(model_path=f"{model_name}.keras")
 
 total_elapsed_time, total_epochs, epoch_per_epochs, images_per_epoch = (
