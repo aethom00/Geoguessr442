@@ -43,6 +43,7 @@ def save_image(image_url, coordinates):
     if response:
         with open(file_path, 'wb') as file:
             file.write(response.content)
+            print("we got here")
         #print(f"Saved image to {file_path}")
     else:
         print(f"Failed to download image: {image_url}")
@@ -193,8 +194,17 @@ iterations = 10  # Specify the number of images you want to download
 
 gui = GUI(15, 10) # random map size
 
-generate_images(gui, key, limit=1, num_images=5, verbose=True, image_cache=set())
+# generate_images(gui, key, limit=1, num_images=10000, verbose=True, image_cache=set())
 
-print(len(os.listdir("Data")))
+directory_path = "Data"
+files_list = os.listdir(directory_path)
+files_set = set(files_list)
+
+print(files_set)
+
+print(f"The current file count is: {len(files_set)}")
+
+generate_images(gui, key, limit=1, num_images=10000, verbose=True, image_cache=files_set)
+
 
 
