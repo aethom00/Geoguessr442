@@ -81,6 +81,25 @@ class Agent:
                 city_image.show() 
                 self.gui.show()  
 
+    #sushrita work
+    def gen_test_train(self):
+        directory_path = "data"
+
+        files = os.listdir(directory_path)
+        for file_name in files:
+            file_path = os.path.join(directory_path, file_name)
+            
+            if os.path.isfile(file_path):
+                with open(file_path, 'r') as file:
+                    print(f"Contents of {file_name}:")
+                    print(file.read())
+                    print()
+            else:
+                # Handle if the item is not a file (e.g., it might be a subdirectory)
+                print(f"{file_name} is not a file.")
+        
+
+
     def train_model(self, total_epochs=10, epoch_per_epochs=10, batch_size=32, images_per_epoch=5, use_noisy_images=False, save_after_epochs=10):
         total_start_time = time.time()
         image_cache = set()
@@ -167,28 +186,43 @@ def create_cnn_model(input_shape, num_classes, model_path):
 
         return model
 
+#made by sushrita :)
+def customLoss(prediction, ground_truth, model):
+    #create weighted box - double check if normalized to 1
+    #center of lat and long
+    #take weight of this - multiply
+    prediction = None
+
+    # bunch of boxes where we need to take each one's centered longitude and latitude multiplied by the normalized weighting and add them all up to get the lat & long of the predicted point
+    ground_truth = None
+
+    model = None
+
+    # need to make loss from the haversine_distance function by using the actual point and the predicted point
+
+
         
-#sushrita
-def main():
-    agent = Agent(rectangles=(15, 10))
-    agent.init()
+# #sushrita below:
+# def main():
+#     agent = Agent(rectangles=(15, 10))
+#     agent.init()
 
-    # output_dir = "Data"
+#     # output_dir = "Data"
 
-    # if os.path.exists(output_dir):
-    #     shutil.rmtree(output_dir, ignore_errors=True)
-    # os.makedirs(output_dir)  
+#     # if os.path.exists(output_dir):
+#     #     shutil.rmtree(output_dir, ignore_errors=True)
+#     # os.makedirs(output_dir)  
 
-    iterations = 5
-    limit = 1
-    verbose = True
-    image_cache = set()
-    agent.generate_images(iterations, limit=limit, verbose=verbose, image_cache=image_cache)
+#     iterations = 5
+#     limit = 1
+#     verbose = True
+#     image_cache = set()
+#     agent.generate_images(iterations, limit=limit, verbose=verbose, image_cache=image_cache)
 
 
-    agent.show()
+#     agent.show()
 
-if __name__ == "__main__":
-    main()    
+# if __name__ == "__main__":
+#     main()    
 
     

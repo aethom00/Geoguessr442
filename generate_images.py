@@ -80,7 +80,7 @@ def get_image_url_from_id(image_id, token):
         return None, None
 
     
-""" def generate_image(gui, app_access_token, limit, verbose=False, image_cache=set()):
+def generate_image(gui, app_access_token, limit, verbose=False, image_cache=set()):
     while True:
         i = random.randint(0, gui.num_rects_width - 1)
         j = random.randint(0, gui.num_rects_height - 1)
@@ -113,48 +113,7 @@ def get_image_url_from_id(image_id, token):
                 print(f"Image Generated\n")
             return
         if verbose:
-            print(f"Couldn't find any images in the bounding box: [({top_left[1]}, {bottom_right[0]}), ({bottom_right[1]}, {top_left[0]})]. Trying again...") """
-
-def generate_images(gui, app_access_token, limit, num_images=5, verbose=False, image_cache=set()):
-    images_downloaded = 0
-    while images_downloaded < num_images:
-        i = random.randint(0, gui.num_rects_width - 1)
-        j = random.randint(0, gui.num_rects_height - 1)
-        
-        top_left = gui.pixel_loc_to_lat_long(i * gui.square_amount[0], j * gui.square_amount[1])
-        bottom_right = gui.pixel_loc_to_lat_long((i + 1) * gui.square_amount[0], (j + 1) * gui.square_amount[1])
-        bbox = f"{top_left[1]},{bottom_right[0]},{bottom_right[1]},{top_left[0]}"
-        if verbose:
-            print("Finding new image")
-        
-        image_ids = find_images_in_bbox(bbox, app_access_token, limit=limit)
-        image_ids = [image_id for image_id in image_ids if image_id not in image_cache] # Remove images that have already been generated
-        if len(image_ids) > 0:
-            for image_id in image_ids:
-                image_url, image_coordinates = get_image_url_from_id(image_id, app_access_token)
-
-                if not image_coordinates or not is_within_countries(image_coordinates, ['USA', 'CAN', 'MEX']):
-                    continue
-            
-                if image_url and image_coordinates:
-                    save_image(image_url, image_coordinates)  
-                    image_cache.add(image_id)
-                    images_downloaded += 1
-                    if images_downloaded >= num_images:
-                        break
-                else:
-                    if verbose:
-                        print(f"No valid image URL or coordinates for image ID: {image_id}")
-            
-            if verbose:
-                print(f"Total Images Downloaded: {images_downloaded}")
-        else:
-            if verbose:
-                print(f"Couldn't find any images in the bounding box: [({top_left[1]}, {bottom_right[0]}), ({bottom_right[1]}, {top_left[0]})]. Trying again...")
-
-    if verbose:
-        print("Finished downloading images.")
-
+            print(f"Couldn't find any images in the bounding box: [({top_left[1]}, {bottom_right[0]}), ({bottom_right[1]}, {top_left[0]})]. Trying again...")
                 
 def get_images(amount=float('inf'), shape=(100, 100), folder_path='Data'):
     images = []
@@ -180,7 +139,7 @@ def get_images(amount=float('inf'), shape=(100, 100), folder_path='Data'):
 
             img_location = os.path.join(folder_path, filename)
             city_image = CityImage(img_location, shape)
-            city_image.set_loc(long, lat) 
+            city_image.set_loc(long, lat)  # Ensure that the coordinates are set in the correct order
             images.append(city_image)
 
     return np.array(images)
@@ -191,6 +150,5 @@ def is_within_countries(coordinates, countries):
     g = geocoder.arcgis(coordinates[::-1], method='reverse')
     # print(g.country)
     return g.country in countries
-
 
 
