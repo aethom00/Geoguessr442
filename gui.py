@@ -62,7 +62,7 @@ class GUI: # class for image
     def toggle_ticks(self, show_ticks):
         self.show_ticks = show_ticks
     
-    def show(self, display_coords=False): 
+    def show(self, display_coords=False, show_boxes=False): 
         _, map = plt.subplots()
         map.imshow(Image.open(self.image_loc))
 
@@ -86,7 +86,7 @@ class GUI: # class for image
                                     self.square_amount[0], 
                                     self.square_amount[1], 
                                     fc=(1, 0, 0, self.output[j, i] * 0.5),  
-                                    ec='none', 
+                                    ec=('black' if show_boxes else 'none'),
                                     lw=1))
                 if display_coords:
                     map.text(x, y + 0.5 * self.square_amount[1], self.locations[(i, j)], fontsize=5 * 10/self.num_rects_width)

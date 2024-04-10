@@ -1,87 +1,32 @@
-def findBox(box_info, target, num_rows, num_cols):
-    row = binarySearch_row(box_info, target, num_rows)
-    print() # for visual breakage
-    col = binarySearch_col(box_info, target, num_cols)
+from gui import GUI
 
-    print()
-
-    print(f"row is: {row}")
-    print(f"col is: {col}")
-
-    print("we get here")
-
-    if row != -1 and col != -1:
-        print(f"Box found at row {row}, column {col}")
-        return (row, col)
-    else:
-        print("Box not found")
-        return -1
-
-
-def binarySearch_row(box_info, target, num_rows):
-    l, r = 0, num_rows-1
+def find_grid_index(target_lat, target_lon, min_lat, max_lat, min_lon, max_lon, num_rows, num_cols):
+    # Calculate the span of each cell
+    lat_per_cell = (max_lat - min_lat) / num_rows
+    lon_per_cell = (max_lon - min_lon) / num_cols
     
-    while l <= r:
-        mid = (l + r) // 2
-
-        
-        top_right, bottom_left = box_info[(mid, 0)] # col is 0
-
-        print(mid)
-
-        print("bl: ", bottom_left[1])
-        print("target", target[1])
-        print("tr: ", top_right[1])
-        print()
-
-        if bottom_left[1] <= target[1] <= top_right[1]:
-            print(f"got row: {mid}")
-            return mid
-
-        elif target[1] < bottom_left[1]:
-            r = mid - 1
-            print("elif is true")
- 
-        else:
-            l = mid + 1
-            print("else is true")
-    return -1
-
-def binarySearch_col(box_info, target, num_cols):
-    l, r = 0, num_cols-1
+    # Calculate the indices
+    i = int((target_lat - min_lat) / lat_per_cell)
+    j = int((target_lon - min_lon) / lon_per_cell)
     
-    while l <= r:
-        mid = (l + r) // 2
-        
-        top_right, bottom_left = box_info[(0, mid)] # row is 0
+    # Adjust if on the edge
+    i = min(i, num_rows - 1)
+    j = min(j, num_cols - 1)
+    
+    return i, j
 
-        if bottom_left[0] <= target[0] <= top_right[0]:
-            print(f"got col: {mid}")
-            return mid
+# our map settings
+min_lat, max_lat = 24, 50
+min_lon, max_lon = -126, -66
+num_rows, num_cols = 15, 10
 
-        elif target[0] < bottom_left[0]:
-            r = mid - 1
-            print("elif is true")
- 
-        else:
-            l = mid + 1
-            print("else is true")
-    return -1
+target_lat, target_long = 44.76306000, -85.62063000
 
+i, j = find_grid_index(target_lat, target_long, min_lat, max_lat, min_lon, max_lon, num_rows, num_cols)
+print(f"The target is in the box at indices: ({i}, {j})")
 
-# Driver Code
-if __name__ == '__main__':
-    # arr = [2, 3, 4, 10, 40]
-    # x = 10
-
-    box_info = {
-        (0, 0): [(1, 2), (0, 1)],
-        (0, 1): [(2, 2), (1, 1)],
-        (1, 0): [(1, 1), (0, 0)],
-        (1, 1): [(2, 1), (1, 0)],
-    }
- 
-    # Function call
-    result = findBox(box_info, (1.5, 0.5), 2, 2)
-    if result != -1:
-        print("Element is present at index", result)
+gui = GUI(num_rects_width=10, num_rects_height=15)
+gui.init()
+gui.clear_output()
+gui.place_dot(target_long, target_lat, color='red', r=5)
+gui.show(display_coords=False, show_boxes=True)
