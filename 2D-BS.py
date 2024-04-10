@@ -23,8 +23,16 @@ def binarySearch_row(box_info, target, num_rows):
     
     while l <= r:
         mid = (l + r) // 2
+
         
         top_right, bottom_left = box_info[(mid, 0)] # col is 0
+
+        print(mid)
+
+        print("bl: ", bottom_left[1])
+        print("target", target[1])
+        print("tr: ", top_right[1])
+        print()
 
         if bottom_left[1] <= target[1] <= top_right[1]:
             print(f"got row: {mid}")
@@ -67,13 +75,13 @@ if __name__ == '__main__':
     # x = 10
 
     box_info = {
-        (0, 0): [(1, 1), (0, 0)],
-        (0, 1): [(1, 2), (0, 1)],
-        (1, 1): [(2, 2), (1, 1)],
-        (1, 0): [(2, 1), (1, 0)],
+        (0, 0): [(1, 2), (0, 1)],
+        (0, 1): [(2, 2), (1, 1)],
+        (1, 0): [(1, 1), (0, 0)],
+        (1, 1): [(2, 1), (1, 0)],
     }
  
     # Function call
-    result = findBox(box_info, (0.5, 1.5), 2, 2)
+    result = findBox(box_info, (1.5, 0.5), 2, 2)
     if result != -1:
         print("Element is present at index", result)
