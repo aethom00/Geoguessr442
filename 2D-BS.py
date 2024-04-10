@@ -1,50 +1,85 @@
 # Python code for binary search on sorted 2D array
-def findBox(coords, target):
-    row = len(arr)
-    col = len(arr[0])
-    l, h = 0, row*col-1
+def findBox(coords, target, num_rows, num_cols):
+    # uses binary search to find the box with the correct target lat/long
+
+    # row = len(arr)
+    # col = len(arr[0])
+
+    low, high = 0, num_rows*num_cols-1
  
-    while(l <= h):
-        mid = l + (h-l)//2 # new index in array form
-        col = mid % col
-        row = mid // col
+    iter = 0
 
-        top_right = coords[(row, col)][0]
-        # top_left = coords[(row, col)][1]
-        bottom_left = coords[(row, col)][2]
-        # bottom_right = coords[(row, col)][3]
+    while(low <= high):
+        mid = low + (high-low)//2 # new index in array form
+        mid_col = mid % num_cols
+        mid_row = mid // num_cols
 
-        within_top_right = target[0] <= top_right[0] and target[1] <= top_right[1]
-        # within_top_left = target[0] <= top_left[0] and target[1] >= top_left[1]
-        within_bottom_left = target[0] >= bottom_left[0] and target[1] >= bottom_left[1]
-        # within_bottom_right = target[0] >= bottom_right[0] and target[1] <= bottom_right[1]
+        # col = mid % col # this originally came before the row calculation
+        # row = mid // col
 
-        within_box = within_top_right and within_bottom_left
 
-        if within_box:
-            return (row, col)
+        iter += 1
+        print(f"Iteration #{iter}")
 
-        # if(val == target):
-        #     return [tR, tC]
+        print(f"row is: {mid_row}")
+        print(f"col is: {mid_col}")
+        print()
 
-        left_of_box = target[1] < bottom_left[1]
+        box_top_right = coords[(mid_row, mid_col)][0]
+        box_bottom_left = coords[(mid_row, mid_col)][1]
 
-        if(left_of_box):
-            l = mid + 1
+        if (box_bottom_left[0] <= target[0] <= box_top_right[0] and
+            box_bottom_left[1] <= target[1] <= box_top_right[1]):
+            return (mid_row, mid_col)
+
+        # if within_box:
+            # return (row, col)
+
+        # left_of_box = target[1] < bottom_left[1]
+        # if(left_of_box):
+        #     low = mid + 1
+
+        if target[0] < box_top_right[0] or target[1] < box_top_right[1]:
+            low = mid + 1  # Target is to the right or above the box
 
         # if(val < target):
-        #     l = mid + 1
+        #     low = mid + 1
         else:
-            h = mid - 1
+            high = mid - 1
  
-    return [-1, -1]
+    return (-1, -1)
 
 # Driver Code
 if __name__ == '__main__':
     # Binary search in sorted matrix
-    arr = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+    # arr = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
 
-    box_info = {(i, j) : [(latitude, longitude), (latitude, longitude)]}
+    # box_info = {(i, j) : [(latitude, longitude) "for upper right", (latitude, longitude) "for bottom left"]}
 
-    ans = findBox(box_info, target=(latitude, longitude))
+    # box_info = {
+    #     (0, 1): [(2, 2), (1, 1)],
+    #     (0, 0): [(1, 2), (0, 1)],
+    #     (1, 0): [(1, 1), (0, 0)],
+    #     (1, 1): [(2, 1), (1, 0)],
+    # }
+
+
+    # ans = findBox(box_info, target=(1.2, 1.2), num_rows=2, num_cols=2)
+    # print("Element found at indices: ", ans)
+
+    box_info = {
+        (0, 0): [(0, 2), (-1, 1)],
+        (0, 1): [(1, 2), (0, 1)],
+        (0, 2): [(2, 2), (1, 1)],
+        (1, 0): [(0, 1), (-1, 0)],
+        (1, 1): [(1, 1), (0, 0)],
+        (1, 2): [(2, 1), (1, 0)],
+        (2, 0): [(0, 0), (-1, -1)],
+        (2, 1): [(1, 0), (0, -1)],
+        (2, 2): [(2, 0), (1, -1)]
+    }
+
+    # Target within the specified box_info grid
+    target = (-0.5, -0.2)  # This target should fall within box (2, 1)
+    ans = findBox(box_info, target, num_rows=3, num_cols=3)
     print("Element found at indices: ", ans)
