@@ -11,6 +11,8 @@ from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 from keras.optimizers import Adam
 from keras.models import load_model
 
+from city_image import haversine_distance
+
 # added
 import shutil
 
@@ -186,17 +188,10 @@ def create_cnn_model(input_shape, num_classes, model_path):
 
         return model
 
-#made by sushrita :)
-def customLoss(prediction, ground_truth, model):
-    #create weighted box - double check if normalized to 1
-    #center of lat and long
-    #take weight of this - multiply
-    prediction = None
 
-    # bunch of boxes where we need to take each one's centered longitude and latitude multiplied by the normalized weighting and add them all up to get the lat & long of the predicted point
-    ground_truth = None
-
-    model = None
+def customLoss(prediction_point, actual_point): # originally had model as an argument
+    '''prediction_point and actual_point are tuples'''
+    return haversine_distance(prediction_point[0], prediction_point[1], actual_point[0], actual_point[1])
 
     # need to make loss from the haversine_distance function by using the actual point and the predicted point
 
