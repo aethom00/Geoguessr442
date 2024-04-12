@@ -1,6 +1,35 @@
 from gui import GUI
+import torch 
 
 
+# original code here
+# def weighted_estimate(grid, min_lat=24, max_lat=50, min_lon=-126, max_lon=-66, num_rows=15, num_cols=10):
+#     '''iterate through array likelihood each box'''
+#     total_lon = 0.0
+#     total_lat = 0.0
+    
+#     lat_per_cell = (max_lat - min_lat) / num_rows
+#     lon_per_cell = (max_lon - min_lon) / num_cols
+
+#     find_mid_lat_long(row, col, lon_per_cell, lat_per_cell)
+#     total_area = num_rows*num_cols
+
+#     for box_index in range(total_area):
+#         row = box_index // num_cols
+#         col = box_index % num_cols
+        
+#         weight = grid[box_index]
+#         # we're given the indices of the boxes, we now need to calculate the center of the box's latitutde and longitude            
+#         center_box_lat, center_box_long = find_mid_lat_long(row, col, lon_per_cell, lat_per_cell)
+#         total_lon += (weight * center_box_long)
+#         total_lat += (weight * center_box_lat)
+
+#     estimated_lon = total_lon/total_area
+#     estimated_lat = total_lat/total_area
+
+#     return estimated_lat, estimated_lon
+
+# tensor version here
 def weighted_estimate(grid, min_lat=24, max_lat=50, min_lon=-126, max_lon=-66, num_rows=15, num_cols=10):
     '''iterate through array likelihood each box'''
     total_lon = 0.0
@@ -9,23 +38,27 @@ def weighted_estimate(grid, min_lat=24, max_lat=50, min_lon=-126, max_lon=-66, n
     lat_per_cell = (max_lat - min_lat) / num_rows
     lon_per_cell = (max_lon - min_lon) / num_cols
 
-    find_mid_lat_long(row, col, lon_per_cell, lat_per_cell)
+    # find_mid_lat_long(row, col, lon_per_cell, lat_per_cell)
     total_area = num_rows*num_cols
 
     for box_index in range(total_area):
         row = box_index // num_cols
         col = box_index % num_cols
         
+
         weight = grid[box_index]
+
+        # print(f'box index: {box_index}')
+        # print(f"row is: {row}")
+        # print(f'col is: {col}')
+        # print(f"weight is: {weight}")
+
         # we're given the indices of the boxes, we now need to calculate the center of the box's latitutde and longitude            
         center_box_lat, center_box_long = find_mid_lat_long(row, col, lon_per_cell, lat_per_cell)
         total_lon += (weight * center_box_long)
         total_lat += (weight * center_box_lat)
 
-    estimated_lon = total_lon/total_area
-    estimated_lat = total_lat/total_area
-
-    return estimated_lat, estimated_lon
+    return total_lat, total_lon
 
 def find_mid_lat_long(row, col, lon_per_cell, lat_per_cell, min_lon=-126, min_lat=24):
     center_box_long = (col * lon_per_cell) + min_lon + lon_per_cell/2

@@ -5,8 +5,6 @@ from torchvision import models, transforms
 from image_loader import LandmarkDataset
 from torch.utils.data import Dataset, DataLoader
 import torch.nn as nn
-from Agent import customLoss
-from weighted_est_file import weighted_estimate
 
 def print_labels(indexes, class_idx):
     for i in indexes:
@@ -24,26 +22,21 @@ def main():
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    dataset = LandmarkDataset(img_dir='data', transform=transform)
-    dataloader = DataLoader(dataset, batch_size=1, shuffle=False)
+    #dataset = LandmarkDataset(img_dir='Data', transform=transform)
+    #dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
+    dataset = LandmarkDataset(img_dir='Data', transform=transform)
+    train_set, val_set = torch.utils.data.random_split(dataset, [500, 18799])
+    dataloader = DataLoader(train_set, batch_size=50, shuffle=False)
 
-    # loss_fn = customLoss(prediction_point, actual_point)
-    loss_fn = customLoss
-    # loss_fn = nn.CrossEntropyLoss()
+    loss_fn = nn.MSELoss()
+    optimizer = torch.optim.Adam(model.fc.parameters(), lr=0.001, weight_decay=1e-5)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
-
-    for epoch in range(5):
+    for epoch in range(10):
         for images, labels in dataloader:
-            estimated_lat, estimated_lon = weighted_estimate(outputs) # for the var input the 150 x 1 vector
-            outputs = model(images)[0]
-            latitute, longitude = labels
-            labels = torch.tensor([latitute.item(), longitude.item()])
-            print(labels, outputs)
-            actual_point = (latitute, longitude) # place in latitude, longitude
             optimizer.zero_grad()
-            loss = customLoss((estimated_lat, estimated_lon), actual_point)
-            #loss = loss_fn(outputs, labels)
+            outputs = model(images)
+            loss = loss_fn(outputs, labels)
+            print(loss)
             loss.backward()
             optimizer.step()
 

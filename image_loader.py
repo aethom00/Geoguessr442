@@ -1,4 +1,5 @@
 import os
+import torch
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
@@ -25,13 +26,7 @@ class LandmarkDataset(Dataset):
         label = self.labels[idx]
         label = label.split("_")
         label = (float(label[0]), float(label[1]))
-
-        # find_grid_index(target_lat, target_lon, min_lat, max_lat, min_lon, max_lon, num_rows, num_cols)
-        
-        label = find_grid_index(float(label[0]), float(label[1]))
-        #box = (10*(float(label[0]) - 1)) + float(label[1])
-
-
+        label = torch.tensor(label)
 
         if self.transform:
             image = self.transform(image)
