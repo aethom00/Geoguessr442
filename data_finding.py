@@ -190,7 +190,6 @@ def is_within_countries(coordinates, countries):
 
 # Replace YOUR_ACCESS_TOKEN with your actual Mapillary access token
 key = 'MLY|7380996212029520|cd6ad220b67aff81fe1328c76de2255a'
-iterations = 10  # Specify the number of images you want to download
 
 gui = GUI(15, 10) # random map size
 
@@ -204,7 +203,7 @@ print(files_set)
 
 print(f"The current file count is: {len(files_set)}")
 
-generate_images(gui, key, limit=1, num_images=10000, verbose=True, image_cache=files_set)
+generate_images(gui, key, limit=10, num_images=10000, verbose=True, image_cache=files_set)
 
 
 
