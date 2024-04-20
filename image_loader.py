@@ -11,7 +11,7 @@ class LandmarkDataset(Dataset):
     def __init__(self, img_dir, transform=None):
         self.img_dir = img_dir
         self.transform = transform
-        self.img_names = [f"data/{img}" for img in os.listdir(img_dir)]
+        self.img_names = [f"Data/{img}" for img in os.listdir(img_dir)]
         self.labels = []  # Assumes labels are part of the filename
         for img in os.listdir(img_dir):
             img = img.removesuffix(".jpg")
@@ -30,5 +30,7 @@ class LandmarkDataset(Dataset):
 
         if self.transform:
             image = self.transform(image)
-
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        image = image.to(device)
+        label = label.to(device)
         return image, label
