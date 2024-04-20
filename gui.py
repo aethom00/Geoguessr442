@@ -95,7 +95,8 @@ class GUI: # class for image
             map.add_patch(dot)
 
         plt.tight_layout()
-        plt.show()
+        #plt.show()
+        plt.savefig("output.png")
 
 
     def generate_random_output(self):
