@@ -189,13 +189,14 @@ def is_within_countries(coordinates, countries):
     return g.country in countries
 
 # Replace YOUR_ACCESS_TOKEN with your actual Mapillary access token
-key = 'MLY|7380996212029520|cd6ad220b67aff81fe1328c76de2255a'
+# key = 'MLY|7380996212029520|cd6ad220b67aff81fe1328c76de2255a' # claire's
+key = 'MLY|7677013145677656|971478afba166c0ce1b5091771c7080b' # ashton's
 
 gui = GUI(15, 10) # random map size
 
 # generate_images(gui, key, limit=1, num_images=10000, verbose=True, image_cache=set())
 
-directory_path = "Data"
+directory_path = "CombinedFiles"
 files_list = os.listdir(directory_path)
 files_set = set(files_list)
 
