@@ -1,16 +1,20 @@
 import click
 import sys
+import train as train_file
 # from train import train_model
 import subprocess
 import pkg_resources
 import evaluate_test as eval_test
 
-def train_func(count, lr = 1e-3):
+def train_func(train):
     """Function to perform training."""
-    click.echo(f"Training mode is now active. Running {count} iterations.")
     
     # calling train here
-    # train_model()
+
+    num_training, num_epochs, batch_size, learning_rate, weight_decay = train
+    click.echo(f"Training mode is now active. Running {num_training} iterations.")
+
+    train_file.main(num_training, num_epochs, batch_size, learning_rate, weight_decay)
 
 
 def eval_func(evaluate):
@@ -38,7 +42,7 @@ def check_dependencies():
     # Output result for how many you want to evaluate
 
 @click.command()
-@click.option('--train', type=int, help='Activate training mode and specify the number of iterations.')
+@click.option('--train', type=(int, int, int, float, float) , help='Activate training mode and numiters/num_epochs/batch_size/learning_rate/weight_decay')
 @click.option('--evaluate', type=(int, bool), help='Activate evaluation mode and specify the number of evaluations followed by independence as a boolean.')
 
 # @click.option('--batch-size', type=int, default=32, help='Specify batch size for training.')

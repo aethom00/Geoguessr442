@@ -41,7 +41,6 @@ def main(count, is_independent):
     total_loss = 0
 
     if not is_independent:
-
         gui = GUI(num_rects_width=1, num_rects_height=1)
         gui.init()
         gui.clear_output()
@@ -69,10 +68,34 @@ def main(count, is_independent):
                     break
         gui.show(display_coords=False, show_boxes=True)
 
-    # else:
+    else:
+        with torch.no_grad():
+            for i, (images, true_label) in enumerate(test_loader):
+                gui = GUI(num_rects_width=1, num_rects_height=1)
+                gui.init()
+                gui.clear_output()
+                
+                outputs = model(images)
+                outputs = outputs.to(device)
 
+                output_val = outputs[0].tolist()
+                true_val = true_label[0].tolist()
         
+                print(f"true_label: {true_val}, predicted_label: {output_val}")
 
+                # red is our guess
+                gui.place_dot(output_val[1], output_val[0], color='red', r=5)
+                
+                # green is the correct
+                gui.place_dot(true_val[1], true_val[0], color='green', r=10)
+
+                loss = loss_fn(outputs, true_label)
+                total_loss += loss
+
+                gui.show(display_coords=False, show_boxes=True)
+
+                if i == (count-1):
+                    break
 
     print(total_loss/len(test_loader))
 if __name__ == '__main__':

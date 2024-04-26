@@ -10,11 +10,7 @@ import matplotlib.pyplot as plt
 from gui import GUI
 
 
-def print_labels(indexes, class_idx):
-    for i in indexes:
-        print(class_idx[str(i.item())])
-
-def main():
+def main(num_training, num_epochs, batch_size, learning_rate, weight_decay):
     torch.manual_seed(1)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(device)
