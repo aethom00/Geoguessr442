@@ -7,12 +7,18 @@ import pkg_resources
 def train_func(count, lr = 1e-3):
     """Function to perform training."""
     click.echo(f"Training mode is now active. Running {count} iterations.")
+    
+    # calling train here
     train_model()
 
 
 def eval_func(count):
     """Function to perform evaluation."""
     click.echo(f"Evaluating mode is now active. Evaluating {count} instances.")
+
+    # calling evaluate here
+        
+
 
 def check_dependencies():
     # Attempt to load the requirements.txt file and install each package using pip
@@ -55,9 +61,7 @@ def cli(train, evaluate, batch_size, learning_rate):
 
 
 
-
-
-
+    # checking that only one main option is specified
     if train and evaluate:
         click.echo("Error: Cannot train and evaluate at the same time.", err=True)
         sys.exit(1)
@@ -65,8 +69,9 @@ def cli(train, evaluate, batch_size, learning_rate):
         click.echo("Error: Need to specify either training or evaluate by using --train or --evaluate followed by a number.", err=True)
         sys.exit(1)
 
-    missing = check_dependencies()
 
+    # this is for checking that all dependencies are present
+    missing = check_dependencies()
     if missing is not None:
         print("Missing packages detected:")
         print(missing)
@@ -81,8 +86,11 @@ def cli(train, evaluate, batch_size, learning_rate):
             print("Installation aborted. The application may not function correctly without the required packages.")
             sys.exit(1)
 
+    # this is for if we want to train
     if train is not None:  # Check if --train was provided
         train_func(train)
+
+    # this is for if we want to evaluate
     if evaluate is not None:  # Check if --evaluate was provided
         if (batch_size is None and learning_rate is None): 
             eval_func(evaluate)
