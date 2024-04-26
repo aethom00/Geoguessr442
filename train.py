@@ -1,7 +1,7 @@
 import torch
 import os
 import json
-from model import final_model
+from model import final_model, CustomGeoMSELoss
 from torchvision import models, transforms
 from image_loader import LandmarkDataset
 from torch.utils.data import Dataset, DataLoader
@@ -16,6 +16,7 @@ def print_labels(indexes, class_idx):
 
 def main():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(device)
     # Load the pre-trained ResNet50 model
     model = models.resnet50(weights='ResNet50_Weights.DEFAULT').to(device)
     num_ftrs = model.fc.in_features
@@ -30,19 +31,21 @@ def main():
     #dataset = LandmarkDataset(img_dir='Data', transform=transform)
     #dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
     dataset = LandmarkDataset(img_dir='Data', transform=transform)
-    train_set, val_set = torch.utils.data.random_split(dataset, [18939, 360])
+    train_set_val = int(0.8 * len(dataset))
+    test_set_val = len(dataset) - train_set_val
+    train_set, test_set = torch.utils.data.random_split(dataset, [train_set_val, test_set_val])
     dataloader = DataLoader(train_set, batch_size=50, shuffle=True)
-    test_loader = DataLoader(val_set, batch_size=1, shuffle=False)
+    test_loader = DataLoader(test_set, batch_size=1, shuffle=False)
 
-    loss_fn = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.fc.parameters(), lr=0.001, weight_decay=1e-5)
+    loss_fn = CustomGeoMSELoss()
+    optimizer = torch.optim.Adam(model.fc.parameters(), lr=0.001, weight_decay=1e-6)
     iteration = 0
     plt_loss = [] 
     plt.xlabel('iteration')
     plt.ylabel('Loss - Cross Entropy')
     iteration = 0
     
-    for epoch in range(5):
+    for epoch in range(2):
         for images, labels in dataloader:
             optimizer.zero_grad()
             outputs = model(images)
