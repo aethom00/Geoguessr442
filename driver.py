@@ -1,23 +1,27 @@
 import click
 import sys
-from train import train_model
+# from train import train_model
 import subprocess
 import pkg_resources
+import evaluate_test as eval_test
 
 def train_func(count, lr = 1e-3):
     """Function to perform training."""
     click.echo(f"Training mode is now active. Running {count} iterations.")
     
     # calling train here
-    train_model()
+    # train_model()
 
 
-def eval_func(count):
+def eval_func(evaluate):
     """Function to perform evaluation."""
-    click.echo(f"Evaluating mode is now active. Evaluating {count} instances.")
 
     # calling evaluate here
-        
+
+    count, is_independent = evaluate
+    click.echo(f"Evaluating mode is now active. Evaluating {count} instances.")
+
+    eval_test.main(count, is_independent)
 
 
 def check_dependencies():
@@ -35,31 +39,27 @@ def check_dependencies():
 
 @click.command()
 @click.option('--train', type=int, help='Activate training mode and specify the number of iterations.')
-@click.option('--evaluate', type=int, help='Activate evaluation mode and specify the number of evaluations.')
+@click.option('--evaluate', type=(int, bool), help='Activate evaluation mode and specify the number of evaluations followed by independence as a boolean.')
+
 # @click.option('--batch-size', type=int, default=32, help='Specify batch size for training.')
-@click.option('--learning-rate', type=float, default=0.001, help='Specify learning rate for training.')
+# @click.option('--learning-rate', type=float, default=0.001, help='Specify learning rate for training.')
 
-def cli(train, evaluate, batch_size, learning_rate):
+def cli(train, evaluate): # , batch_size, learning_rate
     """Simple CLI that can trigger training or evaluation with a specific count."""
-    if train: 
-        # if batch_size:
-        #     if batch_size.type != int:
-        #         click.echo("Error: batch size must be an integer.", err=True)
-        #         sys.exit(1)
-        if learning_rate:
-            if learning_rate.type != float: 
-                click.echo("Error: learning rate must be a float.", err=True)
-                sys.exit(1)
+    # if train: 
+    #     if batch_size:
+    #         if batch_size.type != int:
+    #             click.echo("Error: batch size must be an integer.", err=True)
+    #             sys.exit(1)
+    #     if learning_rate:
+    #         if learning_rate.type != float: 
+    #             click.echo("Error: learning rate must be a float.", err=True)
+    #             sys.exit(1)
 
-    if evaluate: 
-        if batch_size or learning_rate: 
-            click.echo("Error: Cannot evaluate with batch size or learning raye.", err=True)
-            sys.exit(1)      
-
-
-
-
-
+    # if evaluate: 
+    #     if batch_size or learning_rate: 
+    #         click.echo("Error: Cannot evaluate with batch size or learning raye.", err=True)
+    #         sys.exit(1)      
 
     # checking that only one main option is specified
     if train and evaluate:
@@ -70,32 +70,36 @@ def cli(train, evaluate, batch_size, learning_rate):
         sys.exit(1)
 
 
-    # this is for checking that all dependencies are present
-    missing = check_dependencies()
-    if missing is not None:
-        print("Missing packages detected:")
-        print(missing)
-        print()
+    # # this is for checking that all dependencies are present
+    # missing = check_dependencies()
+    # if missing is not None:
+    #     print("Missing packages detected:")
+    #     print(missing)
+    #     print()
 
-        if click.confirm("Do you want to install the missing packages?", default=True):
-            print("Installing packages...")
-            python = sys.executable
-            subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
-            print("Installation complete.")
-        else:
-            print("Installation aborted. The application may not function correctly without the required packages.")
-            sys.exit(1)
+    #     if click.confirm("Do you want to install the missing packages?", default=True):
+    #         print("Installing packages...")
+    #         python = sys.executable
+    #         subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
+    #         print("Installation complete.")
+    #     else:
+    #         print("Installation aborted. The application may not function correctly without the required packages.")
+    #         sys.exit(1)
 
     # this is for if we want to train
     if train is not None:  # Check if --train was provided
+        
+        # need to fix this
         train_func(train)
 
     # this is for if we want to evaluate
     if evaluate is not None:  # Check if --evaluate was provided
-        if (batch_size is None and learning_rate is None): 
-            eval_func(evaluate)
-        elif batch_size is not None: 
-            eval_func(evaluate, learning_rate)
+        eval_func(evaluate)
+
+        # if (batch_size is None and learning_rate is None): 
+        #     eval_func(evaluate)
+        # elif batch_size is not None: 
+        #     eval_func(evaluate, learning_rate)
 
 
 if __name__ == '__main__':

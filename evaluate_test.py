@@ -10,11 +10,7 @@ import matplotlib.pyplot as plt
 from gui import GUI
 
 
-def print_labels(indexes, class_idx):
-    for i in indexes:
-        print(class_idx[str(i.item())])
-
-def main():
+def main(count, is_independent):
     torch.manual_seed(1)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(device)
@@ -24,6 +20,8 @@ def main():
     
     # latest path
     last_path = os.listdir('checkpoints')[-1]
+    last_path = 'checkpoints/' + last_path
+
     model.load_state_dict(torch.load(last_path))
 
 
@@ -36,40 +34,45 @@ def main():
     dataset = LandmarkDataset(img_dir='CombinedFiles', transform=transform)
     train_set_val = int(0.8 * len(dataset))
     test_set_val = len(dataset) - train_set_val
-    train_set, test_set = torch.utils.data.random_split(dataset, [train_set_val, test_set_val])
-    dataloader = DataLoader(train_set, batch_size=50, shuffle=True)
-    test_loader = DataLoader(test_set, batch_size=1, shuffle=False)
+    _, test_set = torch.utils.data.random_split(dataset, [train_set_val, test_set_val])
+    test_loader = DataLoader(test_set, batch_size=1, shuffle=True)
 
     loss_fn = nn.MSELoss()
     total_loss = 0
 
-    gui = GUI(num_rects_width=1, num_rects_height=1)
-    gui.init()
-    gui.clear_output()
+    if not is_independent:
 
-    with torch.no_grad():
-        for i, (images, true_label) in enumerate(test_loader):
-            outputs = model(images)
-            outputs = outputs.to(device)
+        gui = GUI(num_rects_width=1, num_rects_height=1)
+        gui.init()
+        gui.clear_output()
 
-            output_val = outputs[0].tolist()
-            true_val = true_label[0].tolist()
-    
-            print(f"true_label: {true_val}, predicted_label: {output_val}")
+        with torch.no_grad():
+            for i, (images, true_label) in enumerate(test_loader):
+                outputs = model(images)
+                outputs = outputs.to(device)
 
-            # red is our guess
-            gui.place_dot(output_val[1], output_val[0], color='red', r=5)
-            
-            # green is the correct
-            gui.place_dot(true_val[1], true_val[0], color='green', r=10)
+                output_val = outputs[0].tolist()
+                true_val = true_label[0].tolist()
+        
+                print(f"true_label: {true_val}, predicted_label: {output_val}")
 
-            loss = loss_fn(outputs, true_label)
-            total_loss += loss
+                # red is our guess
+                gui.place_dot(output_val[1], output_val[0], color='red', r=5)
+                
+                # green is the correct
+                gui.place_dot(true_val[1], true_val[0], color='green', r=10)
 
-            if i == "some fucking number":
-                break
-            
-    gui.show(display_coords=False, show_boxes=True)
+                loss = loss_fn(outputs, true_label)
+                total_loss += loss
+
+                if i == (count-1):
+                    break
+        gui.show(display_coords=False, show_boxes=True)
+
+    # else:
+
+        
+
 
     print(total_loss/len(test_loader))
 if __name__ == '__main__':
