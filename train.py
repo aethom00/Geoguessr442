@@ -15,6 +15,7 @@ def print_labels(indexes, class_idx):
         print(class_idx[str(i.item())])
 
 def main():
+    torch.manual_seed(1)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(device)
     # Load the pre-trained ResNet50 model
