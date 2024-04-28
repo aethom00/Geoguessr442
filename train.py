@@ -9,6 +9,11 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from gui import GUI
 
+def remove_checkpoint(file_path):
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print("File has been deleted.")
+
 def unfreeze_conv5_x(model):
     # Freeze all parameters first
     for param in model.parameters():
@@ -56,22 +61,29 @@ def main():
     iteration = 0
     plt_loss = [] 
     plt.xlabel('iteration')
-    plt.ylabel('Loss - Cross Entropy')
+    plt.ylabel('Loss - MSE Loss')
+    plt.title('Loss Graph')
     iteration = 0
-    
-    for epoch in range(4):
+
+    model.fc.requires_grad = True
+    model.layer4.load_state_dict(torch.load('checkpoints/resnet50_cnn_1.pth'))
+    model.fc.load_state_dict(torch.load('checkpoints/resnet50_fc_1.pth'))
+
+    for epoch in range(2, 7):
         for images, labels in dataloader:
             optimizer.zero_grad()
             outputs = model(images)
             outputs = outputs.to(device)
             loss = loss_fn(outputs, labels)
-            print(loss)
-            loss_new = loss.cpu().detach().numpy()
-            plt_loss.append([iteration, loss_new])
+            if iteration % 100 == 0:
+                print(loss)
+                loss_new = loss.cpu().detach().numpy()
+                plt_loss.append([iteration, loss_new])
             loss.backward()
             optimizer.step()
             iteration += 1
-        torch.save(model.state_dict(), f'checkpoints/resnet50_{epoch}.pth')
+        torch.save(model.layer4.state_dict(), f'checkpoints/resnet50_cnn_{epoch}.pth')
+        torch.save(model.fc.state_dict(), f'checkpoints/resnet50_fc_{epoch}.pth')
     # Set the model to evaluation mode
     model.eval()
     new_x = []

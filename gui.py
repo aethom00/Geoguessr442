@@ -62,7 +62,7 @@ class GUI: # class for image
     def toggle_ticks(self, show_ticks):
         self.show_ticks = show_ticks
     
-    def show(self, display_coords=False, show_boxes=False): 
+    def show(self,display_coords=False, show_boxes=False, index=False): 
         _, map = plt.subplots()
         map.imshow(Image.open(self.image_loc))
 
@@ -96,7 +96,8 @@ class GUI: # class for image
 
         plt.tight_layout()
         #plt.show()
-        plt.savefig("output.png")
+        plt.savefig(f"Predictions_new/prediction_new_{index}.png")
+
 
 
     def generate_random_output(self):
