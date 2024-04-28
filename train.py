@@ -41,18 +41,18 @@ def main():
     ])
 
 
-    dataset = LandmarkDataset(img_dir='Data', transform=transform)
+    dataset = LandmarkDataset(img_dir='CombinedFiles', transform=transform)
     train_set_val = int(0.8 * len(dataset))
     test_set_val = len(dataset) - train_set_val
     train_set, test_set = torch.utils.data.random_split(dataset, [train_set_val, test_set_val])
-    dataloader = DataLoader(train_set, batch_size=50, shuffle=True)
+    dataloader = DataLoader(train_set, batch_size=64, shuffle=True)
     test_loader = DataLoader(test_set, batch_size=1, shuffle=False)
 
     loss_fn = nn.MSELoss()
     optimizer = torch.optim.Adam([
         {'params': model.layer4.parameters(), 'lr': 1e-4},
         {'params': model.fc.parameters(), 'lr': 1e-4}
-        ], lr=1e-5, weight_decay=1e-5)
+        ], weight_decay=1e-4)
     iteration = 0
     plt_loss = [] 
     plt.xlabel('iteration')

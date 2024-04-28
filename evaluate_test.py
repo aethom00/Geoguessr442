@@ -19,7 +19,7 @@ def main(count, is_independent):
     model.fc = final_model(num_ftrs, 2).to(device)
     
     # latest path
-    last_path = os.listdir('checkpoints')[-1]
+    last_path = os.listdir('checkpoints')[-2]
     last_path = 'checkpoints/' + last_path
 
     model.load_state_dict(torch.load(last_path))
