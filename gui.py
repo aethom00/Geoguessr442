@@ -96,7 +96,11 @@ class GUI: # class for image
 
         plt.tight_layout()
         #plt.show()
-        plt.savefig(f"Predictions_new/prediction_new_{index}.png")
+
+        if index == False:
+            plt.savefig(f"Predictions_new/prediction_all.png")
+        else:
+            plt.savefig(f"Predictions_new/prediction_new_{index}.png")
 
 
 

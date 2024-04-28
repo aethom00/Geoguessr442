@@ -68,10 +68,11 @@ def main(count, is_independent):
 
                 loss = loss_fn(outputs, true_label)
                 total_loss += loss
-                gui.show(display_coords=False, show_boxes=True, index=i)
 
                 if i == (count-1):
                     break
+
+        gui.show(display_coords=False, show_boxes=True)
 
     else:
         with torch.no_grad():
