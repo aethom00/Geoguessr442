@@ -58,25 +58,24 @@ def cli(train, evaluate): # , batch_size, learning_rate
         sys.exit(1)
 
 
-    # this is for checking that all dependencies are present
-    missing = check_dependencies()
-    if missing is not None:
-        print("Missing packages detected:")
-        print(missing)
-        print()
+    # # this is for checking that all dependencies are present
+    # missing = check_dependencies()
+    # if missing is not None:
+    #     print("Missing packages detected:")
+    #     print(missing)
+    #     print()
 
-        if click.confirm("Do you want to install the missing packages?", default=True):
-            print("Installing packages...")
-            python = sys.executable
-            subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
-            print("Installation complete.")
-        else:
-            print("Installation aborted. The application may not function correctly without the required packages.")
-            sys.exit(1)
+    #     if click.confirm("Do you want to install the missing packages?", default=True):
+    #         print("Installing packages...")
+    #         python = sys.executable
+    #         subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
+    #         print("Installation complete.")
+    #     else:
+    #         print("Installation aborted. The application may not function correctly without the required packages.")
+    #         sys.exit(1)
 
     # this is for if we want to train
     if train is not None:  # Check if --train was provided
-        # need to fix this
         train_func(train)
 
     # this is for if we want to evaluate
