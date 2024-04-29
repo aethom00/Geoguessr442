@@ -7,6 +7,7 @@ from image_loader import LandmarkDataset
 from torch.utils.data import Dataset, DataLoader
 import torch.nn as nn
 import matplotlib.pyplot as plt
+import haversine
 from gui import GUI
 
 def remove_checkpoint(file_path):
@@ -119,6 +120,8 @@ def main(num_epochs):
             
             # green is the correct
             gui.place_dot(true_val[1], true_val[0], color='green', r=10)
+
+            print(f"Haversine Distance of iteration {i}: {haversine.haversine_distance(predicted_lat=output_val[0], predicted_long=output_val[1], actual_lat=true_val[0], actual_long=true_val[1])} km")
 
             loss = loss_fn(outputs, true_label)
             total_loss += loss
