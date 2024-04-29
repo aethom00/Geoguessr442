@@ -1,7 +1,6 @@
 import click
 import sys
 import train as train_file
-# from train import train_model
 import subprocess
 import pkg_resources
 import evaluate_test as eval_test
