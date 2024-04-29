@@ -2,7 +2,7 @@ import random
 import requests
 import os
 import numpy as np
-from city_image import CityImage
+from Old_Code.city_image import CityImage
 import geocoder
 import time 
 from gui import GUI

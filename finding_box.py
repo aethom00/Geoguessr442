@@ -1,18 +1,5 @@
 from gui import GUI
 
-def weighted_estimate():
-
-    # we will have 150 boxes
-
-    # we want to take the stored weights for each
-
-
-    
-
-
-    pass
-
-
 def find_grid_index(target_lat, target_lon, min_lat=24, max_lat=50, min_lon=-126, max_lon=-66, num_rows=15, num_cols=10):
     # Calculate the span of each cell
     lat_per_cell = (max_lat - min_lat) / num_rows
