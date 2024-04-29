@@ -28,7 +28,7 @@ def unfreeze_conv5_x(model):
         param.requires_grad = True
 
 #def main(num_training, num_epochs, batch_size, learning_rate, weight_decay):
-def main():
+def main(num_epochs):
     torch.manual_seed(1)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(device)
@@ -69,7 +69,7 @@ def main():
     model.layer4.load_state_dict(torch.load('checkpoints/resnet50_cnn_1.pth'))
     model.fc.load_state_dict(torch.load('checkpoints/resnet50_fc_1.pth'))
 
-    for epoch in range(2, 7):
+    for epoch in range(num_epochs):
         for images, labels in dataloader:
             optimizer.zero_grad()
             outputs = model(images)

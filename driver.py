@@ -6,15 +6,17 @@ import subprocess
 import pkg_resources
 import evaluate_test as eval_test
 
-def train_func(train):
+def train_func(num_epochs):
     """Function to perform training."""
     
     # calling train here
 
-    num_training, num_epochs, batch_size, learning_rate, weight_decay = train
-    click.echo(f"Training mode is now active. Running {num_training} iterations.")
+    # num_training, num_epochs, batch_size, learning_rate, weight_decay = train
+    # click.echo(f"Training mode is now active. Running {num_training} iterations.")
+    click.echo(f"Training mode is now active. Running {num_epochs} iterations.")
 
-    train_file.main(num_training, num_epochs, batch_size, learning_rate, weight_decay)
+    # train_file.main(num_training, num_epochs, batch_size, learning_rate, weight_decay)
+    train_file.main(num_epochs)
 
 
 def eval_func(evaluate):
@@ -42,29 +44,12 @@ def check_dependencies():
     # Output result for how many you want to evaluate
 
 @click.command()
-@click.option('--train', type=(int, int, int, float, float) , help='Activate training mode and numiters/num_epochs/batch_size/learning_rate/weight_decay')
+# @click.option('--train', type=(int, int, int, float, float) , help='Activate training mode and numiters/num_epochs/batch_size/learning_rate/weight_decay')
+@click.option('--train', type=(int), help='Activate training mode and numiters')
 @click.option('--evaluate', type=(int, bool), help='Activate evaluation mode and specify the number of evaluations followed by independence as a boolean.')
 
-# @click.option('--batch-size', type=int, default=32, help='Specify batch size for training.')
-# @click.option('--learning-rate', type=float, default=0.001, help='Specify learning rate for training.')
-
 def cli(train, evaluate): # , batch_size, learning_rate
-    """Simple CLI that can trigger training or evaluation with a specific count."""
-    # if train: 
-    #     if batch_size:
-    #         if batch_size.type != int:
-    #             click.echo("Error: batch size must be an integer.", err=True)
-    #             sys.exit(1)
-    #     if learning_rate:
-    #         if learning_rate.type != float: 
-    #             click.echo("Error: learning rate must be a float.", err=True)
-    #             sys.exit(1)
-
-    # if evaluate: 
-    #     if batch_size or learning_rate: 
-    #         click.echo("Error: Cannot evaluate with batch size or learning raye.", err=True)
-    #         sys.exit(1)      
-
+    """Simple CLI that can trigger training or evaluation with a specific count."""  
     # checking that only one main option is specified
     if train and evaluate:
         click.echo("Error: Cannot train and evaluate at the same time.", err=True)
